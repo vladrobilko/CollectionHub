@@ -1,0 +1,98 @@
+﻿@using CollectionHub.Models
+
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<div class="container mt-2">
+    <form asp-controller="Admin" asp-action="HandleAdminAction" method="post">
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <button type="submit" name="action" value="block" class="btn btn-warning">@Localizer["block"]</button>
+                <button type="submit" name="action" value="unblock" class="btn btn-success">@Localizer["unblock"]</button>
+                <button type="submit" name="action" value="makeadmin" class="btn btn-primary">@Localizer["makeAdmin"]</button>
+                <button type="submit" name="action" value="makeuser" class="btn btn-secondary">@Localizer["makeUser"]</button>
+                <button type="submit" name="action" value="delete" class="btn btn-danger">@Localizer["delete"]</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll"/></th>
+                        <th>@Localizer["name"]</th>
+                        <th>@Localizer["email"]</th>
+                        <th>@Localizer["role"]</th>
+                        <th>@Localizer["status"]</th>
+                        <th>@Localizer["dateRegistration"]</th>
+                        <th>@Localizer["dateLastLogin"]</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td><input type="checkbox" name="selectedUserEmails" class="userCheckbox" data-user-email="@user.Email" /></td>
+                        <td>@user.ViewName</td>
+                        <td>@user.Email</td>
+                        <td>@Html.Raw(user.IsAdmin ? "<strong>Admin</strong>" : "User")</td>
+                        <td>@(user.IsBlocked ? @Localizer["blocked"] : @Localizer["active"])</td>
+                        <td>@(user.RegistrationDate.AddHours(4).ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                        <td>@(user.LastLoginDate.AddHours(4).ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $('#selectAll').change(function () {
+            var isChecked = $(this).prop('checked');
+            $('.userCheckbox').prop('checked', isChecked);
+        });
+
+        $('form').submit(function (event) {
+            event.preventDefault();
+
+            var action = $('button[name="action"]:focus').val();
+
+            var formData = new FormData();
+
+            $('.userCheckbox:checked').each(function () {
+                formData.append('selectedUserEmails', $(this).data('user-email'));
+            });
+            
+            var userEmail = '@User.Identity.Name';
+            formData.append('userEmail', userEmail);
+
+            formData.append('action', action);
+
+            $.ajax({
+                url: '@Url.Action("HandleAdminAction", "Admin")',
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.error("XHR Status: " + xhr.status);
+                    console.error("XHR Status Text: " + xhr.statusText);
+                    console.error("Response Text: " + xhr.responseText);
+                    console.error("Error Message: " + error);
+                }
+            });
+        });
+    });
+</script>
