@@ -12,5 +12,13 @@ namespace CollectionHub.Controllers
         {
             return View();
         }
+
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult CreateCollection(string? userName)
+        {
+            return View();
+        }
     }
 }

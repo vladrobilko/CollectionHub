@@ -12,17 +12,15 @@ namespace CollectionHub.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChangeLanguage()
+        public IActionResult ChangeLanguage(string? culture)
         {
-            string? culture = Request.Query["culture"];
             if (culture != null) SetCookiesForLanguage(culture);
             return Redirect(Request.Headers["Referer"].ToString() ?? "/");
         }
 
         [HttpGet]
-        public IActionResult ChangeTheme()
+        public IActionResult ChangeTheme(string? theme)
         {
-            string? theme = Request.Query["theme"];
             if (theme != null) SetCookiesForTheme(theme);
             return Redirect(Request.Headers["Referer"].ToString() ?? "/");
         }

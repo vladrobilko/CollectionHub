@@ -9,8 +9,8 @@
     <p class="lead mb-4"><b>@Localizer["descriptionPart2"]</b></p>
 
     <div class="mb-5">
-        <a asp-area="" asp-controller="Account" asp-action="Login" class="btn btn-primary me-4 rounded-pill button-size">@Localizer["login"]</a>
-        <a asp-area="" asp-controller="Account" asp-action="Register" class="btn btn-outline-primary rounded-pill button-size">@Localizer["register"]</a>
+        <a class="btn btn-primary me-4 rounded-pill button-size" href="@Url.Action("Login", "Account")">@Localizer["login"]</a>
+        <a class="btn btn-outline-primary rounded-pill button-size" href="@Url.Action("Register", "Account")">@Localizer["register"]</a>
     </div>
 
     <div class="d-flex flex-column flex-sm-row justify-content-center">
