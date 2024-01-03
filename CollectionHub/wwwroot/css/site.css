@@ -35,5 +35,15 @@ body {
     color: #fff !important;
 }
 
-.Light {
-}
+    .Dark a {
+        color: #fff !important;
+    }
+
+    .Dark .navbar-nav .nav-item a:hover {
+        color: #0077cc !important;
+    }
+
+    .Dark .dropdown-menu {
+        background-color: #555;
+        color: #fff !important;
+    }

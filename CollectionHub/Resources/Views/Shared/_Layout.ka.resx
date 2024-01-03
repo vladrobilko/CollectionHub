@@ -124,7 +124,10 @@
     <value>Ბნელი</value>
   </data>
   <data name="language" xml:space="preserve">
-    <value>Ქართული</value>
+    <value>ქა</value>
+  </data>
+  <data name="largestCollections" xml:space="preserve">
+    <value>ყველაზე დიდი კოლექციები</value>
   </data>
   <data name="Light" xml:space="preserve">
     <value>Მსუბუქი</value>
@@ -132,8 +135,14 @@
   <data name="logout" xml:space="preserve">
     <value>გასვლა</value>
   </data>
+  <data name="recentlyAdded" xml:space="preserve">
+    <value>ახლახან დამატებულია</value>
+  </data>
   <data name="search" xml:space="preserve">
     <value>ძიება</value>
+  </data>
+  <data name="tagCloud" xml:space="preserve">
+    <value>მონიშნე ღრუბელი</value>
   </data>
   <data name="theme" xml:space="preserve">
     <value>თემა:</value>

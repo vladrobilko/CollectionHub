@@ -14,7 +14,7 @@
 
 </head>
 <body class="@theme">
-    <header class="mb-3 container-lg mx-auto">
+    <header class="container-lg mb-3">
         @if (IsSectionDefined("HeaderInfo"))
         {
             @RenderSection("HeaderInfo", required: false)
@@ -22,23 +22,34 @@
         else
         {
             <nav class="navbar navbar-expand-lg">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="/"><b class="text-black">COLLECTION<span class="text-primary">HUB</span></b></a>
-
-                    <div class="d-flex justify-content-end align-items-center flex-grow-1">
-                        <form class="d-flex">
-                            <input class="form-control me-2" type="search" placeholder="@Localizer["search"]" aria-label="Search">
-                            <button class="btn btn-outline-primary" type="submit">@Localizer["search"]</button>
-                        </form>
-                    </div>
+                    <a class="navbar-brand me-5 text-nowrap" href="/"><b>COLLECTION<span class="text-primary">HUB</span></b></a>
 
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="true" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
-                    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                        <ul class="navbar-nav ms-0 ms-0">
-                            <li class="nav-item dropdown">
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav mx-auto justify-content-center">
+                            <li class="nav-item dropdown me-4">
+                                <a class="nav-link" href="/Collection">@Localizer["recentlyAdded"]</a>
+                            </li>
+                            <li class="nav-item dropdown me-4">
+                                <a class="nav-link" href="/Collection">@Localizer["largestCollections"]</a>
+                            </li>
+                            <li class="nav-item dropdown me-4">
+                                <a class="nav-link" href="/Collection">@Localizer["tagCloud"]</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ms-auto justify-content-end">
+                            <li class="nav-item dropdown me-3 w-50">
+                                <form class="d-flex">
+                                    <input class="form-control rounded-pill" type="search" placeholder="@Localizer["search"]" aria-label="Search">
+                                    <button class="btn btn-outline-primary border-0" type="submit">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                </form>
+                            </li>
+                            <li class="nav-item dropdown me-3">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-circle-half-stroke"></i>
                                     @Localizer[@theme]
@@ -48,14 +59,14 @@
                                     <li><a class="dropdown-item" href="@Url.Action("ChangeTheme", "Home", new { theme = "Dark" })">@Localizer["Dark"]</a></li>
                                 </ul>
                             </li>
-                            <li class="nav-item dropdown">
+                            <li class="nav-item dropdown me-3">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-globe"></i>
                                     @Localizer["language"]
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="@Url.Action("ChangeLanguage", "Home", new { culture = "en" })">English</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("ChangeLanguage", "Home", new { culture = "ka" })">ართული</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("ChangeLanguage", "Home", new { culture = "en" })">En</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("ChangeLanguage", "Home", new { culture = "ka" })">ქა</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -63,17 +74,19 @@
                         {
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a asp-area="" asp-controller="Account" asp-action="Logout" class="btn btn-danger ml-2">@Localizer["logout"]</a>
+                                    <a class="nav-link text-nowrap" href="/Account/Logout">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                        @Localizer["logout"]
+                                    </a>
                                 </li>
                             </ul>
                         }
                     </div>
-                </div>
             </nav>
-        }       
+        }
     </header>
     <div class="container-lg">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-3 pt-4">
             @RenderBody()
         </main>
     </div>

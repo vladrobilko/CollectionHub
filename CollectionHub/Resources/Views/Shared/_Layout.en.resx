@@ -124,7 +124,10 @@
     <value>Dark</value>
   </data>
   <data name="language" xml:space="preserve">
-    <value>English</value>
+    <value>En</value>
+  </data>
+  <data name="largestCollections" xml:space="preserve">
+    <value>Largest collections</value>
   </data>
   <data name="Light" xml:space="preserve">
     <value>Light</value>
@@ -132,8 +135,14 @@
   <data name="logout" xml:space="preserve">
     <value>Logout</value>
   </data>
+  <data name="recentlyAdded" xml:space="preserve">
+    <value>Recently added</value>
+  </data>
   <data name="search" xml:space="preserve">
     <value>Search</value>
+  </data>
+  <data name="tagCloud" xml:space="preserve">
+    <value>Tag cloud</value>
   </data>
   <data name="theme" xml:space="preserve">
     <value>Theme:</value>
