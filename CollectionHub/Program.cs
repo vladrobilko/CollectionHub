@@ -14,8 +14,10 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IUserManagement, UserManagement>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));

@@ -5,56 +5,64 @@
 
 <div class="row justify-content-center mb-3">
     <div class="col-7">
-        <h2>CREATE COLLECTION</h2>
+        <h2>@Localizer["createCollection"]</h2>
     </div>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-12 col-sm-6 col-md-3">
-        <!--Image-->
-        <form id="uploadForm" action="@Url.Action("UploadImage", "YourController")" method="post" enctype="multipart/form-data">
-            <!-- Your existing image -->
-            <img src="~/AddImage.png" alt="Add image" style="cursor: pointer; width: 100%; height: 100%; object-fit: cover;" onclick="triggerFileInput();" />
+        <form id="imageForm" method="post" action="@Url.Action("UploadImage", "Collection")" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            @if (!string.IsNullOrEmpty(Model.ImageLink))
+            {
+                <img src="@Url.Content(Model.ImageLink)" alt="Uploaded Image" class="uploaded-image" />
+            }
+            else
+            {
+                <label for="fileInput">
+                    <img src="~/AddImage.png" alt="Add image" class="clicked-image" />
+                </label>
+            }
+            <input type="file" id="fileInput" name="File" style="display: none;" onchange="submitForm()" />
 
-            <!-- Hidden file input -->
-            <input type="file" id="fileInput" name="imageFile" style="display: none;" onchange="submitForm();" />
-
-            <!-- Submit button (hidden) -->
             <button type="submit" id="submitButton" style="display: none;"></button>
         </form>
     </div>
     <div class="col-12 col-sm-6 col-md-4">
-        <form method="post" asp-action="CreateCollection">
+        <form id="createCollectionForm" method="post" asp-action="CreateCollection">
             <div class="form-group mb-3">
-                <label asp-for="Theme">Theme:</label>
-                <input asp-for="Theme" class="form-control" />
+                <label asp-for="Theme">@Localizer["theme"]</label>
+                <select class="form-select" asp-for="Theme" asp-items="@Model.Themes">
+                    <option value="" selected>@Localizer["chooseTheme"]</option>
+                </select>
                 <span asp-validation-for="Theme" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Name">Name:</label>
+                <label asp-for="Name">@Localizer["name"]</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Description">Description:</label>
+                <label asp-for="Description">@Localizer["description"]</label>
                 <textarea asp-for="Description" class="form-control" rows="4" cols="30"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Create</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary" onclick="prepareFormData()">@Localizer["create"]</button>
         </form>
     </div>
 </div>
 
-
 <script>
-    function triggerFileInput() {
-        document.getElementById('fileInput').click();
-    }
-
     function submitForm() {
         document.getElementById('submitButton').click();
+    }
+
+    function prepareFormData() {
+        var imageFileDetails = "@Model.ImageLink";
+
+        $("#createCollectionForm").append('<input type="hidden" name="ImageLink" value="' + imageFileDetails + '">');
     }
 </script>
