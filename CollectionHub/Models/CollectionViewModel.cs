@@ -5,6 +5,7 @@ namespace CollectionHub.Models
 {
     public class CollectionViewModel
     {
+        public int Id { get; set; }
         [Required(ErrorMessage = "Please choose a theme.")]
         public string? Theme { get; set; }
 
@@ -19,5 +20,11 @@ namespace CollectionHub.Models
         public IFormFile? File { get; set; }
 
         public List<SelectListItem>? Themes { get; set; }
+
+        public List<ItemViewModel> Items { get; set; }
+
+        public List<SelectListItem> ItemsDataTypes { get; set; }
+
+        public List<string> AllHeaders { get; set; }
     }
 }

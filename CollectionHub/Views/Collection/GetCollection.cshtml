@@ -1,0 +1,51 @@
+﻿@model CollectionHub.Models.CollectionViewModel
+
+@{
+    ViewData["Title"] = "Collection";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <h2 class="text-center">@Model.Name</h2>
+        <p>@Model.Description</p>
+    </div>
+    <div class="col-md-4 justify-content-center">
+        <h2>Add new fields to table here</h2>
+        <form method="post" asp-action="AddItemField">
+            <input type="hidden" name="collectionId" value="@Model.Id" />
+
+            <div class="form-group mb-3">
+                <label>Type</label>
+                <select class="form-select" name="type" asp-items="@Model.ItemsDataTypes">
+                    <option value="" selected>choose type</option>
+                </select>
+                <span class="text-danger">@Html.ValidationMessage("type")</span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Name</label>
+                <input type="text" name="name" class="form-control" />
+                <span class="text-danger">@Html.ValidationMessage("name")</span>
+            </div>
+
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Add</button>
+        </form>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                @foreach (var header in Model.AllHeaders)
+                {
+                    <th scope="col">@header</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
