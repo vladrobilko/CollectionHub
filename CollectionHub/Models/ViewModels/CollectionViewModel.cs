@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace CollectionHub.Models
+namespace CollectionHub.Models.ViewModels
 {
     public class CollectionViewModel
     {

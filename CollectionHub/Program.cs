@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Razor;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using CollectionHub.Models.DataViews;
 
 var builder = WebApplication.CreateBuilder(args);
 

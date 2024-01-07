@@ -1,4 +1,4 @@
-﻿namespace CollectionHub.Models
+﻿namespace CollectionHub.Models.ViewModels
 {
     public class ItemViewModel
     {

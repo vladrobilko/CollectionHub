@@ -1,5 +1,6 @@
 ﻿using CollectionHub.Helpers;
-using CollectionHub.Models;
+using CollectionHub.Models.DataViews;
+using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 

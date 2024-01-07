@@ -1,4 +1,4 @@
-﻿using CollectionHub.Models;
+﻿using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

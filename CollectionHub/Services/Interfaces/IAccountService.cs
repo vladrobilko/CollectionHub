@@ -1,4 +1,4 @@
-﻿using CollectionHub.Models;
+﻿using CollectionHub.Models.ViewModels;
 
 namespace CollectionHub.Services.Interfaces
 {

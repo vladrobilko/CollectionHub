@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace CollectionHub.Models
+namespace CollectionHub.Models.DataViews
 {
     public class User : IdentityUser
     {
