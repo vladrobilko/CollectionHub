@@ -157,11 +157,11 @@ namespace CollectionHub.Controllers
                 },
                 new SelectListItem
                 {
-                    Text = "Yes/No"
+                    Text = "bool"
                 },
                 new SelectListItem
                 {
-                    Text = "Date"
+                    Text = "date"
                 }
             };
         }

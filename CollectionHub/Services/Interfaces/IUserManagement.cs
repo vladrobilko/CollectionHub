@@ -1,5 +1,5 @@
-﻿using CollectionHub.Models;
-using CollectionHub.Models.DataViews;
+﻿using CollectionHub.DataManagement;
+using CollectionHub.Models;
 
 namespace CollectionHub.Services.Interfaces
 {

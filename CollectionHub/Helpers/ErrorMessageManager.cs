@@ -1,4 +1,4 @@
-﻿using CollectionHub.Models.DataViews;
+﻿using CollectionHub.DataManagement;
 using CollectionHub.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 
