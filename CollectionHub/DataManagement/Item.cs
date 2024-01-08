@@ -11,7 +11,7 @@ namespace CollectionHub.DataManagement
 
         public string Name { get; set; } = null!;
 
-        public long CreationDate { get; set; }
+        public DateTimeOffset CreationDate { get; set; }
 
         public string? String1Value { get; set; }
 
@@ -37,17 +37,18 @@ namespace CollectionHub.DataManagement
 
         public bool? Bool3Value { get; set; }
 
-        public DateTime? Date1Value { get; set; }
+        public DateTimeOffset? Date1Value { get; set; }
 
-        public DateTime? Date2Value { get; set; }
+        public DateTimeOffset? Date2Value { get; set; }
 
-        public DateTime? Date3Value { get; set; }
+        public DateTimeOffset? Date3Value { get; set; }
 
         public virtual Collection Collection { get; set; } = null!;
 
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
         public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
+
         public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
     }
 

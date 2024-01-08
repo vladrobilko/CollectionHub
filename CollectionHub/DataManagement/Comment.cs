@@ -10,7 +10,7 @@
 
         public string Text { get; set; } = null!;
 
-        public DateTime CreationDate { get; set; }
+        public DateTimeOffset CreationDate { get; set; }
 
         public virtual Item Item { get; set; } = null!;
 

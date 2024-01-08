@@ -49,7 +49,7 @@ namespace CollectionHub.DataManagement
                 entity.Property(e => e.Bool1Name).HasMaxLength(255);
                 entity.Property(e => e.Bool2Name).HasMaxLength(255);
                 entity.Property(e => e.Bool3Name).HasMaxLength(255);
-                entity.Property(e => e.CreationDate).HasColumnType("datetime");
+                entity.Property(e => e.CreationDate).HasColumnType("datetimeoffset");
                 entity.Property(e => e.Date1Name).HasMaxLength(255);
                 entity.Property(e => e.Date2Name).HasMaxLength(255);
                 entity.Property(e => e.Date3Name).HasMaxLength(255);
@@ -84,7 +84,7 @@ namespace CollectionHub.DataManagement
                 entity.ToTable("Comment");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
-                entity.Property(e => e.CreationDate).HasColumnType("datetime");
+                entity.Property(e => e.CreationDate).HasColumnType("datetimeoffset");
                 entity.Property(e => e.UserId).HasMaxLength(255);
 
                 entity.HasOne(d => d.Item).WithMany(p => p.Comments)
@@ -105,9 +105,9 @@ namespace CollectionHub.DataManagement
                 entity.ToTable("Item");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
-                entity.Property(e => e.Date1Value).HasColumnType("datetime");
-                entity.Property(e => e.Date2Value).HasColumnType("datetime");
-                entity.Property(e => e.Date3Value).HasColumnType("datetime");
+                entity.Property(e => e.Date1Value).HasColumnType("datetimeoffset");
+                entity.Property(e => e.Date2Value).HasColumnType("datetimeoffset");
+                entity.Property(e => e.Date3Value).HasColumnType("datetimeoffset");
                 entity.Property(e => e.Name).HasMaxLength(255);
                 entity.Property(e => e.String1Value).HasMaxLength(255);
                 entity.Property(e => e.String2Value).HasMaxLength(255);

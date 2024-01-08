@@ -58,7 +58,7 @@ namespace CollectionHub.Services
 
         private async Task UpdateUserAsync(User user)
         {
-            user.LastLoginDate = DateTime.UtcNow;
+            user.LastLoginDate = DateTimeOffset.Now;
             await _userManager.UpdateAsync(user);
         }
 
@@ -69,8 +69,8 @@ namespace CollectionHub.Services
                 UserName = registerModel.Email,
                 ViewName = registerModel.ViewName,
                 Email = registerModel.Email,
-                RegistrationDate = DateTime.UtcNow,
-                LastLoginDate = DateTime.UtcNow,
+                RegistrationDate = DateTimeOffset.Now,
+                LastLoginDate = DateTimeOffset.Now,
                 IsBlocked = false,
                 IsAdmin = false
             };

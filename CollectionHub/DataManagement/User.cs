@@ -8,9 +8,9 @@ namespace CollectionHub.DataManagement
 
         public string ViewName { get; set; }
 
-        public DateTime RegistrationDate { get; set; }
+        public DateTimeOffset RegistrationDate { get; set; }
 
-        public DateTime LastLoginDate { get; set; }
+        public DateTimeOffset LastLoginDate { get; set; }
 
         public bool IsBlocked { get; set; }
 

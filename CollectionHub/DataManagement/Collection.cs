@@ -14,7 +14,7 @@
 
         public byte CategoryId { get; set; }
 
-        public DateTime CreationDate { get; set; }
+        public DateTimeOffset CreationDate { get; set; }
 
         public string? String1Name { get; set; }
 

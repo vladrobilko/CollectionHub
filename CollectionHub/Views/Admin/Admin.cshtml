@@ -41,8 +41,8 @@
                         <td>@user.Email</td>
                         <td>@Html.Raw(user.IsAdmin ? "<strong>Admin</strong>" : "User")</td>
                         <td>@(user.IsBlocked ? @Localizer["blocked"] : @Localizer["active"])</td>
-                        <td>@(user.RegistrationDate.AddHours(4).ToString("yyyy-MM-dd HH:mm:ss"))</td>
-                        <td>@(user.LastLoginDate.AddHours(4).ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                        <td>@(user.RegistrationDate.ToString("yyyy-MM-dd HH:mm"))</td>
+                        <td>@(user.LastLoginDate.ToString("yyyy-MM-dd HH:mm"))</td>
                     </tr>
                 }
                 </tbody>
