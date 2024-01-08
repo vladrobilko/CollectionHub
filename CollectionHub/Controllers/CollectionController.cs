@@ -132,9 +132,9 @@ namespace CollectionHub.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UploadImage(CollectionViewModel collectionViewModel)
+        public async Task<IActionResult> UploadImage(CollectionViewModel collectionViewModel)
         {
-            var imagePath = _imageService.UploadImageToAzureAndGiveImageLink(collectionViewModel.File);
+            var imagePath = await _imageService.UploadImageToAzureAndGiveImageLink(collectionViewModel.File);
             TempData["ImagePath"] = imagePath;
             return RedirectToAction("CreateCollection");
         }

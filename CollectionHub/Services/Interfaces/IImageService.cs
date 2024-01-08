@@ -2,6 +2,6 @@
 {
     public interface IImageService
     {
-        string UploadImageToAzureAndGiveImageLink(IFormFile file);
+        Task<string> UploadImageToAzureAndGiveImageLink(IFormFile file);
     }
 }

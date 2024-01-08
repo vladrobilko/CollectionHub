@@ -7,9 +7,9 @@ namespace CollectionHub.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly IUserManagement _userManagement;
+        private readonly IUserManagementService _userManagement;
 
-        public AdminController(IUserManagement userManagement) => _userManagement = userManagement;
+        public AdminController(IUserManagementService userManagement) => _userManagement = userManagement;
 
         [Authorize(Roles = "Admin")]
         [HttpGet]

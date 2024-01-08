@@ -16,7 +16,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IUserManagement, UserManagement>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

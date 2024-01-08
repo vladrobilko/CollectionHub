@@ -3,7 +3,7 @@ using CollectionHub.Models;
 
 namespace CollectionHub.Services.Interfaces
 {
-    public interface IUserManagement
+    public interface IUserManagementService
     {
         Task<List<User>> GetSortUsersAsync();
 

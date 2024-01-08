@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CollectionHub.Services
 {
-    public class UserManagement : IUserManagement
+    public class UserManagementService : IUserManagementService
     {
         private readonly UserManager<User> _userManager;
 
-        public UserManagement(UserManager<User> userManager) => _userManager = userManager;
+        public UserManagementService(UserManager<User> userManager) => _userManager = userManager;
 
         public async Task<List<User>> GetSortUsersAsync()
         {

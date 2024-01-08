@@ -13,22 +13,22 @@ namespace CollectionHub.Services
 
         public ImageService(IOptions<AzureOptions> azureOptions) => _azureOptions = azureOptions.Value;
 
-        public string UploadImageToAzureAndGiveImageLink(IFormFile file)
+        public async Task<string> UploadImageToAzureAndGiveImageLink(IFormFile file)
         {
             EnsureFileIsValid(file);
             using var fileUploadStream = new MemoryStream();
-            file.CopyTo(fileUploadStream);
+            await file.CopyToAsync(fileUploadStream);
             fileUploadStream.Position = 0;
             var uniqueName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            UploadFileToAzure(fileUploadStream, uniqueName);
+            await UploadFileToAzure(fileUploadStream, uniqueName);
             return _azureOptions.BlobURL + "/" + uniqueName;
         }
 
-        private void UploadFileToAzure(Stream fileUploadStream, string uniqueName)
+        private async Task UploadFileToAzure(Stream fileUploadStream, string uniqueName)
         {
             var blobContainerClient = new BlobContainerClient(_azureOptions.ConnectionString, _azureOptions.Container);
             var blobClient = blobContainerClient.GetBlobClient(uniqueName);
-            blobClient.Upload(fileUploadStream, new BlobUploadOptions()
+            await blobClient.UploadAsync(fileUploadStream, new BlobUploadOptions()
             {
                 HttpHeaders = new BlobHttpHeaders
                 {
