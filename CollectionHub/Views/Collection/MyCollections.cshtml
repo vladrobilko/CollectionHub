@@ -12,23 +12,37 @@
         <a class="btn btn-primary rounded-pill" href="@Url.Action("CreateCollection", "Collection")">
             @Localizer["createCollections"]
         </a>
-    </div>  
-    @foreach (var collection in Model)
+    </div>
+    @if (Model.Count == 0)
     {
-        <div class="col-md-6 mb-4 mt-4 col-12">
-            <div class="card flex-row border-0">
-                <img src="@collection.ImageLink" class="card-img-left uploaded-image" alt="Collection Image">
-                <div class="card-body">
-                    <h5 class="card-title h4-sm">@collection.Name</h5>
-                    <p class="card-text">
-                        @{
-                            var truncatedDescription = @collection.Description.Length > 250 ? @collection.Description.Substring(0, 200) + "..." : @collection.Description;
-                        }
-                        @truncatedDescription
-                    </p>
-                    <a href="@Url.Action("GetCollection", "Collection", new { id = collection.Id })" class="stretched-link"></a>
+        <p class="mt-4">You don't have any collections, to create a collection, click create new collection</p>
+    }
+    else
+    {
+        @foreach (var collection in Model)
+        {
+            <div class="col-md-6 mb-4 mt-4 col-12">
+                <div class="card flex-row border-0">
+                    @if (collection.ImageUrl == null)
+                    {
+                        <img src="~/NoImage.png" class="card-img-left uploaded-image" alt="No image">
+                    }
+                    else
+                    {
+                        <img src="@collection.ImageUrl" class="card-img-left uploaded-image" alt="Collection Image">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title h4-sm">@collection.Name</h5>
+                        <p class="card-text">
+                            @{
+                                var truncatedDescription = @collection.Description.Length > 250 ? @collection.Description.Substring(0, 200) + "..." : @collection.Description;
+                            }
+                            @truncatedDescription
+                        </p>
+                        <a href="@Url.Action("GetCollection", "Collection", new { id = collection.Id })" class="stretched-link"></a>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     }
 </div>

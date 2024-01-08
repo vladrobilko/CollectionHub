@@ -51,12 +51,15 @@ body {
 .clicked-image {
     cursor: pointer;
     width: 300px;
-    object-fit: contain;
+    height: 300px;
+    object-fit: cover;
     border-radius: 20px;
 }
 
 .uploaded-image {
     width: 250px;
+    height:250px;
+    object-fit: cover;
     border-radius: 20px;
 }
 

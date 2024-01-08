@@ -16,14 +16,14 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ICollectionService, CollectionService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
 
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<UserDb, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 

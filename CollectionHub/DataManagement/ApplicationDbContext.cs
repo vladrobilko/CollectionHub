@@ -10,25 +10,25 @@ namespace CollectionHub.DataManagement
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<CategoryDb> Categories { get; set; }
 
-        public virtual DbSet<Collection> Collections { get; set; }
+        public virtual DbSet<CollectionDb> Collections { get; set; }
 
-        public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<CommentDb> Comments { get; set; }
 
-        public virtual DbSet<Item> Items { get; set; }
+        public virtual DbSet<ItemDb> Items { get; set; }
 
-        public virtual DbSet<Like> Likes { get; set; }
+        public virtual DbSet<LikeDb> Likes { get; set; }
 
-        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<TagDb> Tags { get; set; }
 
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserDb> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Category>(entity =>
+            modelBuilder.Entity<CategoryDb>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("category_id_primary");
 
@@ -37,14 +37,13 @@ namespace CollectionHub.DataManagement
                 entity.Property(e => e.Name).HasMaxLength(255);
             });
 
-            modelBuilder.Entity<Collection>(entity =>
+            modelBuilder.Entity<CollectionDb>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("collection_id_primary");
 
                 entity.ToTable("Collection");
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
                     .HasColumnName("id");
                 entity.Property(e => e.Bool1Name).HasMaxLength(255);
                 entity.Property(e => e.Bool2Name).HasMaxLength(255);
@@ -77,13 +76,13 @@ namespace CollectionHub.DataManagement
                     .HasConstraintName("collection_userid_foreign");
             });
 
-            modelBuilder.Entity<Comment>(entity =>
+            modelBuilder.Entity<CommentDb>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("comment_id_primary");
 
                 entity.ToTable("Comment");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id);
                 entity.Property(e => e.CreationDate).HasColumnType("datetimeoffset");
                 entity.Property(e => e.UserId).HasMaxLength(255);
 
@@ -98,13 +97,13 @@ namespace CollectionHub.DataManagement
                     .HasConstraintName("comment_userid_foreign");
             });
 
-            modelBuilder.Entity<Item>(entity =>
+            modelBuilder.Entity<ItemDb>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("item_id_primary");
 
                 entity.ToTable("Item");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id);
                 entity.Property(e => e.Date1Value).HasColumnType("datetimeoffset");
                 entity.Property(e => e.Date2Value).HasColumnType("datetimeoffset");
                 entity.Property(e => e.Date3Value).HasColumnType("datetimeoffset");
@@ -119,14 +118,13 @@ namespace CollectionHub.DataManagement
                     .HasConstraintName("item_collectionid_foreign");
             });
 
-            modelBuilder.Entity<Like>(entity =>
+            modelBuilder.Entity<LikeDb>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("like_id_primary");
 
                 entity.ToTable("Like");
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
+                entity.Property(e => e.Id)                    
                     .HasColumnName("id");
                 entity.Property(e => e.UserId).HasMaxLength(255);
 
@@ -141,7 +139,7 @@ namespace CollectionHub.DataManagement
                     .HasConstraintName("like_userid_foreign");
             });
 
-            modelBuilder.Entity<Tag>(entity =>
+            modelBuilder.Entity<TagDb>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("tag_id_primary");
 
@@ -149,8 +147,7 @@ namespace CollectionHub.DataManagement
 
                 entity.HasIndex(e => e.Name, "tag_name_unique").IsUnique();
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
+                entity.Property(e => e.Id)                    
                     .HasColumnName("id");
                 entity.Property(e => e.Name).HasMaxLength(255);
 

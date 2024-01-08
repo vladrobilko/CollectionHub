@@ -1,6 +1,6 @@
 ﻿namespace CollectionHub.DataManagement
 {
-    public partial class Comment
+    public partial class CommentDb
     {
         public long Id { get; set; }
 
@@ -12,8 +12,8 @@
 
         public DateTimeOffset CreationDate { get; set; }
 
-        public virtual Item Item { get; set; } = null!;
+        public virtual ItemDb Item { get; set; } = null!;
 
-        public virtual User User { get; set; } = null!;
+        public virtual UserDb User { get; set; } = null!;
     }
 }

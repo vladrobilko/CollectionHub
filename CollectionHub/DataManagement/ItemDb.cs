@@ -1,9 +1,6 @@
-﻿using Azure;
-
-namespace CollectionHub.DataManagement
+﻿namespace CollectionHub.DataManagement
 {
-
-    public partial class Item
+    public partial class ItemDb
     {
         public long Id { get; set; }
 
@@ -43,13 +40,12 @@ namespace CollectionHub.DataManagement
 
         public DateTimeOffset? Date3Value { get; set; }
 
-        public virtual Collection Collection { get; set; } = null!;
+        public virtual CollectionDb Collection { get; set; } = null!;
 
-        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public virtual ICollection<CommentDb> Comments { get; set; } = new List<CommentDb>();
 
-        public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
+        public virtual ICollection<LikeDb> Likes { get; set; } = new List<LikeDb>();
 
-        public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
+        public virtual ICollection<TagDb> Tags { get; set; } = new List<TagDb>();
     }
-
 }

@@ -6,7 +6,7 @@ namespace CollectionHub.Helpers
 {
     public static class ErrorMessageManager
     {
-        public static void SetErrorMessage(this LoginUserViewModel loginUser, SignInResult? result, User? user)
+        public static void SetErrorMessage(this LoginUserViewModel loginUser, SignInResult? result, UserDb? user)
         {
             if (result?.IsLockedOut == true)
                 loginUser.ErrorMessage = "Your account is locked due to too many failed attempts. Please try again later.";

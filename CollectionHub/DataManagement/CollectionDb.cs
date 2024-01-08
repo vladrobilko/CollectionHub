@@ -1,6 +1,6 @@
 ﻿namespace CollectionHub.DataManagement
 {
-    public partial class Collection
+    public partial class CollectionDb
     {
         public long Id { get; set; }
 
@@ -46,10 +46,10 @@
 
         public string? Date3Name { get; set; }
 
-        public virtual Category Category { get; set; } = null!;
+        public virtual CategoryDb Category { get; set; } = null!;
 
-        public virtual ICollection<Item> Items { get; set; } = new List<Item>();
+        public virtual ICollection<ItemDb> Items { get; set; } = new List<ItemDb>();
 
-        public virtual User User { get; set; } = null!;
+        public virtual UserDb User { get; set; } = null!;
     }
 }

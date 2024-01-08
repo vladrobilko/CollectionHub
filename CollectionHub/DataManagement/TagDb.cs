@@ -1,6 +1,6 @@
 ﻿namespace CollectionHub.DataManagement
 {
-    public partial class Tag
+    public partial class TagDb
     {
         public long Id { get; set; }
 
@@ -8,6 +8,6 @@
 
         public string Name { get; set; } = null!;
 
-        public virtual Item Item { get; set; } = null!;
+        public virtual ItemDb Item { get; set; } = null!;
     }
 }

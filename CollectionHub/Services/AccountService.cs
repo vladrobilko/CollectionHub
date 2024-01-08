@@ -8,13 +8,13 @@ namespace CollectionHub.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<UserDb> _userManager;
 
-        private readonly SignInManager<User> _signInManager;
+        private readonly SignInManager<UserDb> _signInManager;
 
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager)
+        public AccountService(UserManager<UserDb> userManager, SignInManager<UserDb> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -43,7 +43,7 @@ namespace CollectionHub.Services
 
         public async Task LogoutAsync() => await _signInManager.SignOutAsync();
 
-        private async Task<IdentityResult> CreateAndSignInUserAsync(RegisterUserViewModel registerModel, User user)
+        private async Task<IdentityResult> CreateAndSignInUserAsync(RegisterUserViewModel registerModel, UserDb user)
         {
             var result = await _userManager.CreateAsync(user, registerModel.Password);
             if (result.Succeeded)
@@ -56,14 +56,14 @@ namespace CollectionHub.Services
             return result;
         }
 
-        private async Task UpdateUserAsync(User user)
+        private async Task UpdateUserAsync(UserDb user)
         {
             user.LastLoginDate = DateTimeOffset.Now;
             await _userManager.UpdateAsync(user);
         }
 
-        private User CreateUser(RegisterUserViewModel registerModel) =>
-            new User
+        private UserDb CreateUser(RegisterUserViewModel registerModel) =>
+            new UserDb
             {
                 Id = Guid.NewGuid().ToString(),
                 UserName = registerModel.Email,

@@ -13,9 +13,9 @@
     <div class="col-12 col-sm-6 col-md-3">
         <form id="imageForm" method="post" action="@Url.Action("UploadImage", "Collection")" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
-            @if (!string.IsNullOrEmpty(Model.ImageLink))
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
             {
-                <img src="@Url.Content(Model.ImageLink)" alt="Uploaded Image" class="uploaded-image" />
+                <img src="@Url.Content(Model.ImageUrl)" alt="Uploaded Image" class="uploaded-image" />
             }
             else
             {
@@ -61,8 +61,8 @@
     }
 
     function prepareFormData() {
-        var imageFileDetails = "@Model.ImageLink";
+        var imageFileDetails = "@Model.ImageUrl";
 
-        $("#createCollectionForm").append('<input type="hidden" name="ImageLink" value="' + imageFileDetails + '">');
+        $("#createCollectionForm").append('<input type="hidden" name="ImageUrl" value="' + imageFileDetails + '">');
     }
 </script>

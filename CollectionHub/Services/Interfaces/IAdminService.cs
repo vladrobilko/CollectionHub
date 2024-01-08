@@ -3,9 +3,9 @@ using CollectionHub.Models;
 
 namespace CollectionHub.Services.Interfaces
 {
-    public interface IUserManagementService
+    public interface IAdminService
     {
-        Task<List<User>> GetSortUsersAsync();
+        Task<List<UserDb>> GetSortUsersAsync();
 
         Task HandleUserManageActionsAsync(UserManageActions action, List<string> emails);
 

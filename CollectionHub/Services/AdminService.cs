@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CollectionHub.Services
 {
-    public class UserManagementService : IUserManagementService
+    public class AdminService : IAdminService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<UserDb> _userManager;
 
-        public UserManagementService(UserManager<User> userManager) => _userManager = userManager;
+        public AdminService(UserManager<UserDb> userManager) => _userManager = userManager;
 
-        public async Task<List<User>> GetSortUsersAsync()
+        public async Task<List<UserDb>> GetSortUsersAsync()
         {
             var users = await _userManager.Users.ToListAsync();
             return users.OrderByDescending(u => u.IsAdmin).ToList();

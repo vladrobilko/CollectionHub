@@ -5,7 +5,7 @@ namespace CollectionHub.Models.ViewModels
 {
     public class CollectionViewModel
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required(ErrorMessage = "Please choose a category.")]
         public string? Category { get; set; }
@@ -16,16 +16,16 @@ namespace CollectionHub.Models.ViewModels
         [Required(ErrorMessage = "Please enter a description.")]
         public string? Description { get; set; }
 
-        public string? ImageLink { get; set; }
+        public string? ImageUrl { get; set; }
 
         public IFormFile? File { get; set; }
 
         public List<SelectListItem>? Categories { get; set; }
 
-        public List<ItemViewModel> Items { get; set; }
+        public List<ItemViewModel>? Items { get; set; }
 
-        public List<SelectListItem> ItemsDataTypes { get; set; }
+        public List<SelectListItem>? ItemsDataTypes { get; set; }
 
-        public List<string> AllHeaders { get; set; }
+        public List<string>? AllHeaders { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace CollectionHub.DataManagement
 {
-    public partial class Like
+    public partial class LikeDb
     {
         public long Id { get; set; }
 
@@ -8,8 +8,8 @@
 
         public string UserId { get; set; } = null!;
 
-        public virtual Item Item { get; set; } = null!;
+        public virtual ItemDb Item { get; set; } = null!;
 
-        public virtual User User { get; set; } = null!;
+        public virtual UserDb User { get; set; } = null!;
     }
 }
