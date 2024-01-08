@@ -1,4 +1,5 @@
-﻿using CollectionHub.Models.ViewModels;
+﻿using CollectionHub.Helpers;
+using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,12 @@ namespace CollectionHub.Controllers
     {
         private readonly IImageService _imageService;
 
-        public CollectionController(IImageService imageService)
+        private readonly ICollectionService _collectionService;
+
+        public CollectionController(IImageService imageService, ICollectionService collectionService)
         {
             _imageService = imageService;
+            _collectionService = collectionService;
         }
 
         [Authorize]
@@ -56,10 +60,10 @@ namespace CollectionHub.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult CreateCollection()
+        public async Task<IActionResult> CreateCollection()
         {
-            var viewModel = new CollectionViewModel();
-            viewModel.Themes = GetThemes();
+            var categories = await _collectionService.GetAllCategories();
+            var viewModel = new CollectionViewModel { Categories = categories.ToSelectListItem() };
             if (TempData.TryGetValue("ImagePath", out var imagePath)) viewModel.ImageLink = (string)imagePath;
             return View(viewModel);
         }
@@ -74,7 +78,7 @@ namespace CollectionHub.Controllers
                 //when create collection create empty tables and entities for default
                 throw new NotImplementedException();
             }
-            collectionViewModel.Themes = GetThemes(); //get themes from db 
+            collectionViewModel.Categories = GetThemes(); //get themes from db 
             return View(collectionViewModel);
         }
 

@@ -6,8 +6,9 @@ namespace CollectionHub.Models.ViewModels
     public class CollectionViewModel
     {
         public int Id { get; set; }
-        [Required(ErrorMessage = "Please choose a theme.")]
-        public string? Theme { get; set; }
+
+        [Required(ErrorMessage = "Please choose a category.")]
+        public string? Category { get; set; }
 
         [Required(ErrorMessage = "Please enter a collection name.")]
         public string? Name { get; set; }
@@ -19,7 +20,7 @@ namespace CollectionHub.Models.ViewModels
 
         public IFormFile? File { get; set; }
 
-        public List<SelectListItem>? Themes { get; set; }
+        public List<SelectListItem>? Categories { get; set; }
 
         public List<ItemViewModel> Items { get; set; }
 

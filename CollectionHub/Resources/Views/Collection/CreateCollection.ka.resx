@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="chooseTheme" xml:space="preserve">
-    <value>აირჩიეთ თემა</value>
+  <data name="category" xml:space="preserve">
+    <value>კატეგორია:</value>
+  </data>
+  <data name="chooseCategory" xml:space="preserve">
+    <value>აირჩიეთ კატეგორია</value>
   </data>
   <data name="create" xml:space="preserve">
     <value>Შექმნა</value>
@@ -131,8 +134,5 @@
   </data>
   <data name="name" xml:space="preserve">
     <value>სახელი:</value>
-  </data>
-  <data name="theme" xml:space="preserve">
-    <value>თემა:</value>
   </data>
 </root>

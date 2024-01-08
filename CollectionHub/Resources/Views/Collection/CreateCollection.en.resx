@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="chooseTheme" xml:space="preserve">
-    <value>Choose theme</value>
+  <data name="category" xml:space="preserve">
+    <value>Category:</value>
+  </data>
+  <data name="chooseCategory" xml:space="preserve">
+    <value>Choose category</value>
   </data>
   <data name="create" xml:space="preserve">
     <value>Create</value>
@@ -131,8 +134,5 @@
   </data>
   <data name="name" xml:space="preserve">
     <value>Name:</value>
-  </data>
-  <data name="theme" xml:space="preserve">
-    <value>Theme:</value>
   </data>
 </root>
