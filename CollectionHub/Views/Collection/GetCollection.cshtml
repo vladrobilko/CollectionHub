@@ -5,31 +5,33 @@
 }
 
 <div class="row">
-    <div class="col-md-8">
-        <h2 class="text-center">@Model.Name</h2>
+    <div class="col-md-6">
+        <h2 class="text-left text-uppercase mb-4">@Model.Name</h2>
         <p>@Model.Description</p>
     </div>
-    <div class="col-md-4 justify-content-center">
-        <h2>Add new field to table here</h2>
-        <form method="post" asp-action="AddItemField">
+    <div class="col-md-4 offset-md-1 justify-content-center">
+        <h2 class="text-uppercase mb-4">Add table column here</h2>
+        <form method="post" asp-action="AddCollectionItemField">
             <input type="hidden" name="collectionId" value="@Model.Id" />
 
             <div class="form-group mb-3">
                 <label>Type</label>
                 <select class="form-select" name="type" asp-items="@Model.ItemsDataTypes">
-                    <option value="" selected>choose type</option>
+                    <option value="" selected>Choose type</option>
                 </select>
-                <span class="text-danger">@Html.ValidationMessage("type")</span>
             </div>
 
             <div class="form-group mb-3">
                 <label>Name</label>
                 <input type="text" name="name" class="form-control" />
-                <span class="text-danger">@Html.ValidationMessage("name")</span>
             </div>
 
             <button type="submit" class="w-100 btn btn-lg btn-primary">Add</button>
+            <span class="text-danger">@Html.ValidationMessage("error")</span>
         </form>
+    </div>
+    <div class="col-md-2">
+        <a class="btn btn-primary rounded-pill" href="@Url.Action("CreateItem", "Item", new { collectionId = Model.Id})">Create new item</a>
     </div>
 </div>
 

@@ -23,7 +23,7 @@ namespace CollectionHub.Helpers
             return result;
         }
 
-        public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb)
+        public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb, List<string> headersDb)
         {//set items and headers
             return new CollectionViewModel
             {
@@ -31,7 +31,7 @@ namespace CollectionHub.Helpers
                 Name = collectionDb.Name,
                 Description = collectionDb.Description,
                 ItemsDataTypes = GetItemsDataTypes(),
-                AllHeaders = GetDefaultHeaders()
+                AllHeaders = GetHeaders(headersDb)
             };
         }
 
@@ -47,13 +47,15 @@ namespace CollectionHub.Helpers
             };
         }
 
-        private static List<string> GetDefaultHeaders()
+        private static List<string> GetHeaders(List<string> headersDb)
         {
-            return new List<string>
+            var predefinedHeaders = new List<string>()
             {
                 "Name",
                 "Tags"
             };
+            predefinedHeaders.AddRange(headersDb);
+            return predefinedHeaders;
         }
     }
 }

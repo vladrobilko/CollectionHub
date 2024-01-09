@@ -1,4 +1,5 @@
 ﻿using CollectionHub.Helpers;
+using CollectionHub.Models.Enums;
 using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -54,33 +55,36 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCollection(int id)
         {
+            var errorMessage = TempData["ErrorMessage"] as string;
+            if (!string.IsNullOrEmpty(errorMessage))            
+                ModelState.AddModelError("error", errorMessage);            
             var collection = await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, id);
             return View(collection);
         }
-
+        //start
+        [Authorize]
         [HttpPost]
-        public IActionResult AddItemField(string collectionId, string type, string name)
+        public async Task<IActionResult> AddCollectionItemField(long collectionId, string type, string name)
         {
-            if (string.IsNullOrEmpty(type))
-            {
-                ModelState.AddModelError("type", "Please select a type.");
-            }
-
-            if (string.IsNullOrEmpty(name))
-            {
-                ModelState.AddModelError("name", "Please enter a type name.");
-            }
-
-            var collection = _collectionService.GetUserCollection(HttpContext.User.Identity.Name, long.Parse(collectionId));
-
+            if (string.IsNullOrEmpty(type) || string.IsNullOrEmpty(name))
+                TempData["ErrorMessage"] = "Please select a type and enter a type name.";            
             if (ModelState.IsValid)
             {
-                //save to db
-                return View("GetCollection", collection);
+                var dataType = (DataType)Enum.Parse(typeof(DataType), type);
+                var result = await _collectionService.AddCollectionItemField(HttpContext.User.Identity.Name, collectionId, dataType, name);
+                if (!result)                
+                    TempData["ErrorMessage"] = "You can only add up to 3 fields of the same type, and names must be unique.";                
+                return RedirectToAction("GetCollection", new { id = collectionId });
             }
+            return RedirectToAction("GetCollection", new { id = collectionId });
+        }
 
-            // If there are validation errors, redisplay the form with error messages
-            return View("GetCollection", collection);
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DeleteCollection(long id)
+        {
+            await _collectionService.DeleteCollection(id);
+            return RedirectToAction("MyCollections");
         }
 
         [Authorize]

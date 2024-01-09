@@ -1,5 +1,6 @@
 ﻿using CollectionHub.DataManagement;
 using CollectionHub.Helpers;
+using CollectionHub.Models.Enums;
 using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,15 @@ namespace CollectionHub.Services
         {
             _context = context;
             _userManager = userManager;
+        }
+
+        public async Task<bool> AddCollectionItemField(string userName, long id, DataType type, string name)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            var collection = await _context.Collections
+                .FirstAsync(x => x.UserId == user.Id && x.Id == id);
+
+            return await UpdateCollectionFieldName(type, collection, name);
         }
 
         public async Task<List<string>> GetAllCategories() => await _context.Categories.Select(x => x.Name).ToListAsync();
@@ -37,7 +47,25 @@ namespace CollectionHub.Services
             var user = await _userManager.FindByNameAsync(userName);
             var collection = await _context.Collections
                 .FirstAsync(x => x.UserId == user.Id && x.Id == id);
-            return collection.ToCollectionViewModel();
+
+            var nonNullFieldNames = GetNonNullFieldNames(collection);
+
+            return collection.ToCollectionViewModel(nonNullFieldNames);
+        }
+
+        public List<string?> GetNonNullFieldNames(CollectionDb collection)
+        {//I can get from db what not null in Dictionary
+            var propertyNames = GetPropertyNames();
+            var propertyInfos = collection.GetType().GetProperties();
+
+            return propertyInfos
+                .Where(property =>
+                    propertyNames.Contains(property.Name) &&
+                    property.PropertyType == typeof(string) &&
+                    property.GetValue(collection) != null)
+                .Select(property => (string)property.GetValue(collection))
+                .ToList();
+            //add here instead of list .ToDictionary(property => property.Name, property => (string)property.GetValue(collection));
         }
 
         public async Task CreateCollection(CollectionViewModel collection, string userName)
@@ -48,7 +76,14 @@ namespace CollectionHub.Services
             await _context.SaveChangesAsync();
         }
 
-        private CollectionDb CreateCollectionDbInstance(UserDb user, CollectionViewModel collection,CategoryDb category)
+        public async Task DeleteCollection(long id)
+        {
+            var collection = await _context.Collections.FirstAsync(x => x.Id == id);
+            _context.Remove(collection);
+            await _context.SaveChangesAsync();
+        }
+
+        private CollectionDb CreateCollectionDbInstance(UserDb user, CollectionViewModel collection, CategoryDb category)
         {
             return new CollectionDb
             {
@@ -59,6 +94,66 @@ namespace CollectionHub.Services
                 CategoryId = category.Id,
                 CreationDate = DateTimeOffset.Now
             };
+        }
+
+        private async Task<bool> UpdateCollectionFieldName(DataType type, CollectionDb collection, string name)
+        {
+            var propertyNames = GetPropertyNames(type);
+            if (IsNameExist(propertyNames, collection, name)) return false;
+            foreach (var propertyName in propertyNames)
+            {
+                var property = collection.GetType().GetProperty(propertyName);
+                var value = (string)property.GetValue(collection);
+
+                if (value == null)
+                {
+                    property.SetValue(collection, name);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsNameExist(string[] propertyNames, CollectionDb collection, string name)
+        {
+            return propertyNames
+                .Select(propertyName => (string)collection.GetType().GetProperty(propertyName).GetValue(collection))
+                .ToList().Contains(name);
+        }
+
+        private string[] GetPropertyNames(DataType type)
+        {
+            return type switch
+            {
+                DataType.String => new[] { "String1Name", "String2Name", "String3Name" },
+                DataType.Integer => new[] { "Int1Name", "Int2Name", "Int3Name" },
+                DataType.Text => new[] { "Text1Name", "Text2Name", "Text3Name" },
+                DataType.Bool => new[] { "Bool1Name", "Bool2Name", "Bool3Name" },
+                DataType.Date => new[] { "Date1Name", "Date2Name", "Date3Name" },
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
+            };
+        }
+
+        private string[] GetPropertyNames()
+        {
+            return [
+                "String1Name",
+                "String2Name",
+                "String3Name",
+                "Int1Name",
+                "Int2Name",
+                "Int3Name",
+                "Text1Name",
+                "Text2Name",
+                "Text3Name",
+                "Bool1Name",
+                "Bool2Name",
+                "Bool3Name",
+                "Date1Name",
+                "Date2Name",
+                "Date3Name"];
         }
     }
 }

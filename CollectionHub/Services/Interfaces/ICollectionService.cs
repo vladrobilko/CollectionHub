@@ -1,4 +1,5 @@
-﻿using CollectionHub.Models.ViewModels;
+﻿using CollectionHub.Models.Enums;
+using CollectionHub.Models.ViewModels;
 
 namespace CollectionHub.Services.Interfaces
 {
@@ -11,5 +12,9 @@ namespace CollectionHub.Services.Interfaces
         Task<List<CollectionViewModel>> GetUserCollections(string userName);
 
         Task<CollectionViewModel> GetUserCollection(string userName, long id);
+
+        Task<bool> AddCollectionItemField(string userName, long id, DataType type, string name);
+
+        Task DeleteCollection(long id);
     }
 }

@@ -5,7 +5,7 @@
 }
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6 mb-4">
         <h2>@Localizer["myCollections"]</h2>
     </div>
     <div class="col-md-6 text-md-end">
@@ -21,7 +21,7 @@
     {
         @foreach (var collection in Model)
         {
-            <div class="col-md-6 mb-4 mt-4 col-12">
+            <div class="col-md-6 col-12">
                 <div class="card flex-row border-0">
                     @if (collection.ImageUrl == null)
                     {
@@ -42,7 +42,24 @@
                         <a href="@Url.Action("GetCollection", "Collection", new { id = collection.Id })" class="stretched-link"></a>
                     </div>
                 </div>
+                <div class="d-flex flex-row-reverse mb-1">
+                    <a class="p-2 text-secondary a-custom-hover" onclick="confirmDelete('@Url.Action("DeleteCollection", "Collection", new { id = collection.Id })')">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </a>
+                    <a class="p-2 text-secondary a-custom-hover" href="@Url.Action("EditCollection", "Collection", new { id = collection.Id })">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                </div>
             </div>
         }
     }
 </div>
+
+<script>
+    function confirmDelete(deleteUrl) {
+        var result = confirm("Are you sure you want to delete?");
+        if (result) {
+            window.location.href = deleteUrl;
+        }
+    }
+</script>
