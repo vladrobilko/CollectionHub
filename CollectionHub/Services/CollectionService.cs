@@ -53,8 +53,8 @@ namespace CollectionHub.Services
             return collection.ToCollectionViewModel(nonNullFieldNames);
         }
 
-        public List<string?> GetNonNullFieldNames(CollectionDb collection)
-        {//I can get from db what not null in Dictionary
+        public Dictionary<string, string> GetNonNullFieldNames(CollectionDb collection)
+        {
             var propertyNames = GetPropertyNames();
             var propertyInfos = collection.GetType().GetProperties();
 
@@ -63,16 +63,14 @@ namespace CollectionHub.Services
                     propertyNames.Contains(property.Name) &&
                     property.PropertyType == typeof(string) &&
                     property.GetValue(collection) != null)
-                .Select(property => (string)property.GetValue(collection))
-                .ToList();
-            //add here instead of list .ToDictionary(property => property.Name, property => (string)property.GetValue(collection));
+                .ToDictionary(property => property.Name, property => (string)property.GetValue(collection)!);
         }
 
         public async Task CreateCollection(CollectionViewModel collection, string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
             var category = await _context.Categories.FirstAsync(x => x.Name == collection.Category);
-            await _context.Collections.AddAsync(CreateCollectionDbInstance(user, collection, category));
+            await _context.AddAsync(CreateCollectionDbInstance(user, collection, category));
             await _context.SaveChangesAsync();
         }
 
@@ -98,8 +96,8 @@ namespace CollectionHub.Services
 
         private async Task<bool> UpdateCollectionFieldName(DataType type, CollectionDb collection, string name)
         {
-            var propertyNames = GetPropertyNames(type);
-            if (IsNameExist(propertyNames, collection, name)) return false;
+            var propertyNames = type.ToPropertyNames();
+            if (IsFieldExist(propertyNames, collection, name)) return false;
             foreach (var propertyName in propertyNames)
             {
                 var property = collection.GetType().GetProperty(propertyName);
@@ -112,28 +110,14 @@ namespace CollectionHub.Services
                     return true;
                 }
             }
-
             return false;
         }
 
-        public bool IsNameExist(string[] propertyNames, CollectionDb collection, string name)
+        private bool IsFieldExist(string[] propertyNames, CollectionDb collection, string name)
         {
             return propertyNames
                 .Select(propertyName => (string)collection.GetType().GetProperty(propertyName).GetValue(collection))
                 .ToList().Contains(name);
-        }
-
-        private string[] GetPropertyNames(DataType type)
-        {
-            return type switch
-            {
-                DataType.String => new[] { "String1Name", "String2Name", "String3Name" },
-                DataType.Integer => new[] { "Int1Name", "Int2Name", "Int3Name" },
-                DataType.Text => new[] { "Text1Name", "Text2Name", "Text3Name" },
-                DataType.Bool => new[] { "Bool1Name", "Bool2Name", "Bool3Name" },
-                DataType.Date => new[] { "Date1Name", "Date2Name", "Date3Name" },
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
-            };
         }
 
         private string[] GetPropertyNames()

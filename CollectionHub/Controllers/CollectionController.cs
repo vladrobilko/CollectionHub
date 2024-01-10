@@ -1,5 +1,4 @@
 ﻿using CollectionHub.Helpers;
-using CollectionHub.Models.Enums;
 using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -61,7 +60,7 @@ namespace CollectionHub.Controllers
             var collection = await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, id);
             return View(collection);
         }
-        //start
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCollectionItemField(long collectionId, string type, string name)
@@ -70,8 +69,7 @@ namespace CollectionHub.Controllers
                 TempData["ErrorMessage"] = "Please select a type and enter a type name.";            
             if (ModelState.IsValid)
             {
-                var dataType = (DataType)Enum.Parse(typeof(DataType), type);
-                var result = await _collectionService.AddCollectionItemField(HttpContext.User.Identity.Name, collectionId, dataType, name);
+                var result = await _collectionService.AddCollectionItemField(HttpContext.User.Identity.Name, collectionId, type.ToDataType(), name);
                 if (!result)                
                     TempData["ErrorMessage"] = "You can only add up to 3 fields of the same type, and names must be unique.";                
                 return RedirectToAction("GetCollection", new { id = collectionId });
@@ -85,16 +83,6 @@ namespace CollectionHub.Controllers
         {
             await _collectionService.DeleteCollection(id);
             return RedirectToAction("MyCollections");
-        }
-
-        [Authorize]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadImage(CollectionViewModel collectionViewModel)
-        {
-            var imagePath = await _imageService.UploadImageToAzureAndGiveImageLink(collectionViewModel.File);
-            TempData["ImageUrl"] = imagePath;
-            return RedirectToAction("CreateCollection");
         }
     }
 }

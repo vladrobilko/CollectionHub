@@ -23,8 +23,8 @@ namespace CollectionHub.Helpers
             return result;
         }
 
-        public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb, List<string> headersDb)
-        {//set items and headers
+        public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb, Dictionary<string, string> headersDb)
+        {
             return new CollectionViewModel
             {
                 Id = collectionDb.Id,
@@ -39,22 +39,23 @@ namespace CollectionHub.Helpers
         {
             return new List<SelectListItem>
             {
-                new SelectListItem { Text = DataType.Integer.ToString() },
                 new SelectListItem { Text = DataType.String.ToString() },
+                new SelectListItem { Text = DataType.Integer.ToString() },
                 new SelectListItem { Text = DataType.Text.ToString() },
                 new SelectListItem { Text = DataType.Bool.ToString() },
                 new SelectListItem { Text = DataType.Date.ToString() }
             };
         }
 
-        private static List<string> GetHeaders(List<string> headersDb)
+        private static Dictionary<string, string> GetHeaders(Dictionary<string, string> headersDb)
         {
-            var predefinedHeaders = new List<string>()
+            var predefinedHeaders = new Dictionary<string, string>
             {
-                "Name",
-                "Tags"
+                {  "Name", "Name" },
+                { "Tags" ,"Tags"  }
             };
-            predefinedHeaders.AddRange(headersDb);
+            foreach (var item in headersDb)
+                predefinedHeaders.Add(item.Key, item.Value);
             return predefinedHeaders;
         }
     }

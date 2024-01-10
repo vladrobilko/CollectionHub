@@ -26,6 +26,6 @@ namespace CollectionHub.Models.ViewModels
 
         public List<SelectListItem>? ItemsDataTypes { get; set; }
 
-        public List<string>? AllHeaders { get; set; }
+        public Dictionary<string, string>? AllHeaders { get; set; }
     }
 }
