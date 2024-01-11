@@ -12,13 +12,10 @@ namespace CollectionHub.Services
 
         private readonly SignInManager<UserDb> _signInManager;
 
-        private readonly RoleManager<IdentityRole> _roleManager;
-
-        public AccountService(UserManager<UserDb> userManager, SignInManager<UserDb> signInManager, RoleManager<IdentityRole> roleManager)
+        public AccountService(UserManager<UserDb> userManager, SignInManager<UserDb> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
         }
 
         public async Task<bool> RegisterAsync(RegisterUserViewModel registerModel)
@@ -36,8 +33,14 @@ namespace CollectionHub.Services
                 return false;
             }
             var signInResult = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
-            if (!user.IsBlocked && signInResult.Succeeded) await UpdateUserAsync(user);
-            else loginModel.SetErrorMessage(signInResult, user);
+            if (!user.IsBlocked && signInResult.Succeeded)
+            {
+                await UpdateUserAsync(user);
+            }
+            else
+            {
+                loginModel.SetErrorMessage(signInResult, user);
+            }
             return user?.IsBlocked == false && signInResult.Succeeded;
         }
 
@@ -52,7 +55,9 @@ namespace CollectionHub.Services
                 await _signInManager.SignInAsync(user, isPersistent: false);
             }
             else
+            {
                 registerModel.ErrorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
+            }
             return result;
         }
 

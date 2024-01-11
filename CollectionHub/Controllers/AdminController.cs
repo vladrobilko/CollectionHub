@@ -7,26 +7,30 @@ namespace CollectionHub.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly IAdminService _userManagement;
+        private readonly IAdminService _adminService;
 
-        public AdminController(IAdminService userManagement) => _userManagement = userManagement;
+        public AdminController(IAdminService adminService) => _adminService = adminService;
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Admin()
         {
-            if (await _userManagement.IsUserBlocked(HttpContext.User.Identity.Name) || !HttpContext.User.Identity.IsAuthenticated)
+            if (await _adminService.IsUserBlocked(HttpContext.User.Identity.Name) || !HttpContext.User.Identity.IsAuthenticated)
+            {
                 return RedirectToAction("Login", "Account");
-            return View(await _userManagement.GetSortUsersAsync());
+            }
+            return View(await _adminService.GetSortUsersAsync());
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> HandleAdminAction(string action, List<string> selectedUserEmails)
         {
-            if (await _userManagement.IsUserBlocked(HttpContext.User.Identity.Name))
+            if (await _adminService.IsUserBlocked(HttpContext.User.Identity.Name))
+            {
                 return RedirectToAction("Login", "Account");
-            await _userManagement.HandleUserManageActionsAsync(action.ToUserManageActions(), selectedUserEmails);//makeadmin
+            }
+            await _adminService.HandleAdminActionsAsync(action.ToUserManageActions(), selectedUserEmails);
             return RedirectToAction("Admin");
         }
     }

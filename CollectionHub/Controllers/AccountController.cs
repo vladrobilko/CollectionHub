@@ -14,7 +14,10 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            if (HttpContext.User.Identity.IsAuthenticated) return RedirectToAction("MyCollections", "Collection");
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("MyCollections", "Collection");
+            }
             return View();
         }
 
@@ -22,14 +25,19 @@ namespace CollectionHub.Controllers
         public async Task<IActionResult> Register(RegisterUserViewModel registerModel)
         {
             if (ModelState.IsValid && await _accountService.RegisterAsync(registerModel))
+            {
                 return RedirectToAction("MyCollections", "Collection");
+            }
             return View("Register", registerModel);
         }
 
         [HttpGet]
         public IActionResult Login()
         {
-            if (HttpContext.User.Identity.IsAuthenticated) return RedirectToAction("MyCollections", "Collection");
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("MyCollections", "Collection");
+            }
             return View();
         }
 
@@ -37,7 +45,9 @@ namespace CollectionHub.Controllers
         public async Task<IActionResult> Login(LoginUserViewModel loginModel)
         {
             if (ModelState.IsValid && await _accountService.LoginAsync(loginModel))
+            {
                 return RedirectToAction("MyCollections", "Collection");
+            }
             return View("Login", loginModel);
         }
 

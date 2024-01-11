@@ -7,7 +7,7 @@ namespace CollectionHub.Services.Interfaces
     {
         Task<List<UserDb>> GetSortUsersAsync();
 
-        Task HandleUserManageActionsAsync(UserManageActions action, List<string> emails);
+        Task HandleAdminActionsAsync(UserManageActions action, List<string> emails);
 
         Task<bool> IsUserBlocked(string? email);
     }

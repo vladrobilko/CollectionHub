@@ -81,9 +81,8 @@ namespace CollectionHub.Services
             await _context.SaveChangesAsync();
         }
 
-        private CollectionDb CreateCollectionDbInstance(UserDb user, CollectionViewModel collection, CategoryDb category)
-        {
-            return new CollectionDb
+        private CollectionDb CreateCollectionDbInstance(UserDb user, CollectionViewModel collection, CategoryDb category) =>        
+             new CollectionDb
             {
                 UserId = user.Id,
                 Name = collection.Name,
@@ -91,13 +90,15 @@ namespace CollectionHub.Services
                 ImageUrl = collection.ImageUrl,
                 CategoryId = category.Id,
                 CreationDate = DateTimeOffset.Now
-            };
-        }
+            };        
 
         private async Task<bool> UpdateCollectionFieldName(DataType type, CollectionDb collection, string name)
         {
             var propertyNames = type.ToPropertyNames();
-            if (IsFieldExist(propertyNames, collection, name)) return false;
+            if (IsFieldExist(propertyNames, collection, name))
+            {
+                return false;
+            }
             foreach (var propertyName in propertyNames)
             {
                 var property = collection.GetType().GetProperty(propertyName);

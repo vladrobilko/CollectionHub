@@ -6,20 +6,15 @@ namespace CollectionHub.Helpers
 {
     public static class ErrorMessageManager
     {
-        public static void SetErrorMessage(this LoginUserViewModel loginUser, SignInResult? result, UserDb? user)
-        {
-            if (result?.IsLockedOut == true)
-                loginUser.ErrorMessage = "Your account is locked due to too many failed attempts. Please try again later.";
-            else if (result?.IsNotAllowed == true)
-                loginUser.ErrorMessage = "You are not allowed to sign in. Please contact support for assistance.";
-            else if (!result?.Succeeded == true)
-                loginUser.ErrorMessage = "Incorrect password. Please try again.";
-            else if (user?.IsBlocked == true)
-                loginUser.ErrorMessage = "Sorry, your account is currently blocked.";
-            else if (user == null)
-                loginUser.ErrorMessage = "Invalid email. Please try again.";
-            else
-                loginUser.ErrorMessage = "Invalid email or password. Please try again.";
-        }
+        public static void SetErrorMessage(this LoginUserViewModel loginUser, SignInResult? result, UserDb? user) =>
+            loginUser.ErrorMessage = result switch
+            {
+                { IsLockedOut: true } => "Your account is locked due to too many failed attempts. Please try again later.",
+                { IsNotAllowed: true } => "You are not allowed to sign in. Please contact support for assistance.",
+                { Succeeded: false } => "Incorrect password. Please try again.",
+                _ when user?.IsBlocked == true => "Sorry, your account is currently blocked.",
+                null => "Invalid email. Please try again.",
+                _ => "Invalid email or password. Please try again.",
+            };
     }
 }

@@ -4,9 +4,8 @@ namespace CollectionHub.Helpers
 {
     public static class DataTypeConverter
     {
-        public static string[] ToPropertyNames(this DataType type)
-        {
-            return type switch
+        public static string[] ToPropertyNames(this DataType type) =>
+            type switch
             {
                 DataType.String => new[] { "String1Name", "String2Name", "String3Name" },
                 DataType.Integer => new[] { "Int1Name", "Int2Name", "Int3Name" },
@@ -15,18 +14,15 @@ namespace CollectionHub.Helpers
                 DataType.Date => new[] { "Date1Name", "Date2Name", "Date3Name" },
                 _ => throw new NotSupportedException(),
             };
-        }
 
-        public static string ToInputType(this DataType type)
-        {
-            return type switch
-            {
-                DataType.String => "text",
-                DataType.Integer => "number",
-                DataType.Bool => "checkbox",
-                DataType.Date => "date",
-                _ => throw new NotSupportedException(),
-            };
-        }
+        public static string ToInputType(this DataType type) =>
+             type switch
+             {
+                 DataType.String => "text",
+                 DataType.Integer => "number",
+                 DataType.Bool => "checkbox",
+                 DataType.Date => "date",
+                 _ => throw new NotSupportedException(),
+             };
     }
 }

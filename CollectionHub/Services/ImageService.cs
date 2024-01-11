@@ -16,11 +16,14 @@ namespace CollectionHub.Services
         public async Task<string> UploadImageToAzureAndGiveImageLink(IFormFile file)
         {
             EnsureFileIsValid(file);
+
             using var fileUploadStream = new MemoryStream();
             await file.CopyToAsync(fileUploadStream);
             fileUploadStream.Position = 0;
+
             var uniqueName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             await UploadFileToAzure(fileUploadStream, uniqueName);
+
             return _azureOptions.BlobURL + "/" + uniqueName;
         }
 
@@ -39,8 +42,14 @@ namespace CollectionHub.Services
 
         private void EnsureFileIsValid(IFormFile file)
         {
-            if (file == null || file.FileName == null) throw new NotImplementedException();
-            if (!file.OpenReadStream().IsImage()) throw new FormatException();
+            if (file == null || file.FileName == null)
+            {
+                throw new NotImplementedException();
+            }
+            if (!file.OpenReadStream().IsImage())
+            {
+                throw new FormatException();
+            }
         }
     }
 }

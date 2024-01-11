@@ -7,25 +7,34 @@ namespace CollectionHub.Controllers
     {
         public IActionResult Index()
         {
-            if (HttpContext.User.Identity.IsAuthenticated) return RedirectToAction("MyCollections", "Collection");
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("MyCollections", "Collection");
+            }
             return View();
         }
 
         [HttpGet]
         public IActionResult ChangeLanguage(string? culture)
         {
-            if (culture != null) SetCookiesForLanguage(culture);
+            if (culture != null)
+            {
+                SetCookiesForLanguage(culture);
+            }
             return Redirect(Request.Headers["Referer"].ToString() ?? "/");
         }
 
         [HttpGet]
         public IActionResult ChangeTheme(string? theme)
         {
-            if (theme != null) SetCookiesForTheme(theme);
+            if (theme != null)
+            {
+                SetCookiesForTheme(theme);
+            }
             return Redirect(Request.Headers["Referer"].ToString() ?? "/");
         }
 
-        private void SetCookiesForTheme(string? theme)
+        private void SetCookiesForTheme(string? theme)//throw to business logic?
         {
             Response.Cookies.Append(
                 "ThemePreference",
@@ -33,7 +42,7 @@ namespace CollectionHub.Controllers
                 new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
         }
 
-        private void SetCookiesForLanguage(string? culture)
+        private void SetCookiesForLanguage(string? culture)//throw to business logic?
         {
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
