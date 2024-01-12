@@ -365,3 +365,5 @@ FodyWeavers.xsd
 /CollectionHub/Migrations/20240107153628_init.cs
 /CollectionHub/Migrations/ApplicationDbContextModelSnapshot.cs
 /CollectionHub/Migrations
+/CollectionHub.Infrastructure/Migrations/20240108103649_init.cs
+/CollectionHub.Infrastructure/Migrations/ApplicationDbContextModelSnapshot.cs
