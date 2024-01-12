@@ -4,6 +4,6 @@ namespace CollectionHub.Services.Interfaces
 {
     public interface IImageService
     {
-        Task<string> UploadImageToAzureAndGiveImageLink(IFormFile file);
+        string UploadImageToAzureAndGiveImageLink(IFormFile file);
     }
 }

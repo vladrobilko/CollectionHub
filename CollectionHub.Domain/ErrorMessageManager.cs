@@ -2,7 +2,7 @@
 using CollectionHub.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 
-namespace CollectionHub.Helpers
+namespace CollectionHub.Domain
 {
     public static class ErrorMessageManager
     {
