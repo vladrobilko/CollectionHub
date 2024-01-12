@@ -3,7 +3,7 @@ using CollectionHub.Models.Enums;
 using CollectionHub.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace CollectionHub.Helpers
+namespace CollectionHub.Domain.Converters
 {
     public static class CollectionDbConverter
     {

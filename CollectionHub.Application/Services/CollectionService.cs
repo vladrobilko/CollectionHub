@@ -1,5 +1,5 @@
 ﻿using CollectionHub.DataManagement;
-using CollectionHub.Helpers;
+using CollectionHub.Domain.Converters;
 using CollectionHub.Models.Enums;
 using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;

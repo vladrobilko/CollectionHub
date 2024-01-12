@@ -3,6 +3,7 @@ using Azure.Storage.Blobs.Models;
 using CollectionHub.Models;
 using CollectionHub.Services.Interfaces;
 using FileTypeChecker.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
 namespace CollectionHub.Services

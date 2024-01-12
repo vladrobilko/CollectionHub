@@ -18,7 +18,7 @@ namespace CollectionHub.Services
             return users.OrderByDescending(u => u.IsAdmin).ToList();
         }
 
-        public async Task HandleAdminActionsAsync(UserManageActions action, List<string> emails)//refactor
+        public async Task HandleAdminActionAsync(UserManageActions action, List<string> emails)//refactor
         {
             if (action == UserManageActions.Delete)
                 await DeleteUsers(emails);
@@ -32,10 +32,11 @@ namespace CollectionHub.Services
                 await ProcessAdminUsers(emails, false);
         }
 
-        public async Task<bool> IsUserBlocked(string? email)
+        public async Task<bool> IsUserBlockedOrNotAdmin(string? email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            return user == null || user.IsBlocked;
+            var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+            return user == null || user.IsBlocked || !isAdmin;
         }
 
         private async Task ProcessAdminUsers(List<string> emails, bool isAdmin)
@@ -45,9 +46,18 @@ namespace CollectionHub.Services
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user != null)
                 {
-                    if (isAdmin) await _userManager.AddToRoleAsync(user, "Admin");
                     user.IsAdmin = isAdmin;
-                    await _userManager.UpdateAsync(user);
+                    if (isAdmin) 
+                    {
+                        await _userManager.RemoveFromRoleAsync(user, "User");
+                        await _userManager.AddToRoleAsync(user, "Admin"); 
+                    }
+                    else
+                    {
+                        await _userManager.RemoveFromRoleAsync(user, "Admin");
+                        await _userManager.AddToRoleAsync(user, "User");
+                    }
+                     await _userManager.UpdateAsync(user);
                 }
             }
         }

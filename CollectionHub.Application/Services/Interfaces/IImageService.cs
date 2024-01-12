@@ -1,4 +1,6 @@
-﻿namespace CollectionHub.Services.Interfaces
+﻿using Microsoft.AspNetCore.Http;
+
+namespace CollectionHub.Services.Interfaces
 {
     public interface IImageService
     {

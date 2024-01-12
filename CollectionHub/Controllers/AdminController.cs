@@ -1,4 +1,4 @@
-﻿using CollectionHub.Helpers;
+﻿using CollectionHub.Domain.Converters;
 using CollectionHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +15,7 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Admin()
         {
-            if (await _adminService.IsUserBlocked(HttpContext.User.Identity.Name) || !HttpContext.User.Identity.IsAuthenticated)
+            if (await _adminService.IsUserBlockedOrNotAdmin(HttpContext.User.Identity.Name) || !HttpContext.User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -26,11 +26,11 @@ namespace CollectionHub.Controllers
         [HttpPost]
         public async Task<IActionResult> HandleAdminAction(string action, List<string> selectedUserEmails)
         {
-            if (await _adminService.IsUserBlocked(HttpContext.User.Identity.Name))
+            if (await _adminService.IsUserBlockedOrNotAdmin(HttpContext.User.Identity.Name))
             {
                 return RedirectToAction("Login", "Account");
             }
-            await _adminService.HandleAdminActionsAsync(action.ToUserManageActions(), selectedUserEmails);
+            await _adminService.HandleAdminActionAsync(action.ToUserManageActions(), selectedUserEmails);
             return RedirectToAction("Admin");
         }
     }

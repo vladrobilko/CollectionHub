@@ -7,14 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
-    <PackageReference Include="File.TypeChecker" Version="4.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <ProjectReference Include="..\CollectionHub.Application\CollectionHub.Application.csproj" />
+    <ProjectReference Include="..\CollectionHub.Domain\CollectionHub.Domain.csproj" />
+    <ProjectReference Include="..\CollectionHub.Infrastructure\CollectionHub.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

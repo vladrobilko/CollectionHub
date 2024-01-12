@@ -1,6 +1,6 @@
 ﻿using CollectionHub.Models.Enums;
 
-namespace CollectionHub.Helpers
+namespace CollectionHub.Domain.Converters
 {
     public static class DataTypeConverter
     {

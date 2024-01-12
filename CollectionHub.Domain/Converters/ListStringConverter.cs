@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace CollectionHub.Helpers
+namespace CollectionHub.Domain.Converters
 {
     public static class ListStringConverter
     {
