@@ -22,9 +22,9 @@ namespace CollectionHub.Services
 
         public async Task<bool> AddCollectionItemField(string userName, long id, DataType type, string name)
         {
-            var user = await _userManager.FindByNameAsync(userName);
             var collection = await _context.Collections
-                .FirstAsync(x => x.UserId == user.Id && x.Id == id);
+                .Where(x => x.User.UserName == userName)
+                .FirstAsync(x => x.Id == id);
 
             return await UpdateCollectionFieldName(type, collection, name);
         }
@@ -33,20 +33,20 @@ namespace CollectionHub.Services
 
         public async Task<List<CollectionViewModel>> GetUserCollections(string userName)
         {
-            var user = await _userManager.FindByNameAsync(userName);
             var collections = await _context.Collections
-                .Where(x => x.UserId == user.Id)
+                .Where(x => x.User.UserName == userName)
                 .OrderByDescending(x => x.CreationDate)
                 .ToListAsync();
+
             return collections.ToCollectionViewModelList();
         }
 
         public async Task<CollectionViewModel> GetUserCollection(string userName, long id)
         {
             //get and set items here and headers
-            var user = await _userManager.FindByNameAsync(userName);
             var collection = await _context.Collections
-                .FirstAsync(x => x.UserId == user.Id && x.Id == id);
+                .Where(x => x.User.UserName == userName)
+                .FirstAsync(x => x.Id == id);
 
             var nonNullFieldNames = GetNonNullFieldNames(collection);
 
@@ -70,6 +70,7 @@ namespace CollectionHub.Services
         {
             var user = await _userManager.FindByNameAsync(userName);
             var category = await _context.Categories.FirstAsync(x => x.Name == collection.Category);
+
             await _context.AddAsync(CreateCollectionDbInstance(user, collection, category));
             await _context.SaveChangesAsync();
         }
