@@ -30,8 +30,22 @@
             <span class="text-danger">@Html.ValidationMessage("error")</span>
         </form>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2 mb-3 p-0 justify-content-center">
         <a class="btn btn-primary rounded-pill" href="@Url.Action("CreateItem", "Item", new { collectionId = Model.Id})">Create new item</a>
+    </div>
+    <div class="col-md-1 p-0 mb-3">
+        <form method="post" asp-controller="Item" asp-action="EditItem">
+            <input type="hidden" name="collectionId" value="@Model.Id" />
+            <input type="hidden" name="selectedItemId" id="editSelectedItemId" />
+            <button type="submit" class="btn btn-secondary rounded-pill">Edit</button>
+        </form>
+    </div>
+    <div class="col-md-1 p-0 mb-3">
+        <form method="post" asp-controller="Item" asp-action="DeleteItem">
+            <input type="hidden" name="collectionId" value="@Model.Id" />
+            <input type="hidden" name="selectedItemId" id="deleteSelectedItemId" />
+            <button type="submit" class="btn btn-danger rounded-pill">Delete</button>
+        </form>
     </div>
 </div>
 
@@ -39,6 +53,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th><input type="hidden"/></th>
                 <th scope="col">#</th>
                 @foreach (var header in Model.AllHeaders)
                 {
@@ -47,7 +62,35 @@
             </tr>
         </thead>
         <tbody>
+            @if (Model.Items != null)
+            {
+                for (int i = 0; i < Model.Items.Count; i++)
+                {
+                    var rowData = Model.Items[i];
 
+                    <tr>
+                        <td><input type="radio" class="item-radio" name="selectItem" data-item-id="@rowData[0]" /></td>
+                        <td>@(i + 1)</td>
+                        @for (int j = 1; j < rowData.Count; j++)
+                        {
+                            <td>@rowData[j]</td>                            
+                        }
+                    </tr>
+                }
+            }
         </tbody>
     </table>
 </div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Update hidden field when radio button is changed
+            $(".item-radio").change(function () {
+                var selectedId = $(".item-radio:checked").data("item-id");
+                $("#editSelectedItemId").val(selectedId);
+                $("#deleteSelectedItemId").val(selectedId);
+            });
+        });
+    </script>
+}

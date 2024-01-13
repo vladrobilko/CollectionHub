@@ -10,6 +10,7 @@ namespace CollectionHub.Domain.Converters
         public static List<CollectionViewModel> ToCollectionViewModelList(this List<CollectionDb> collectionDb)
         {
             var result = new List<CollectionViewModel>();
+
             foreach (var item in collectionDb)
             {
                 result.Add(new CollectionViewModel
@@ -20,10 +21,11 @@ namespace CollectionHub.Domain.Converters
                     ImageUrl = item.ImageUrl
                 });
             }
+
             return result;
         }
 
-        public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb, Dictionary<string, string> headersDb)
+        public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb, Dictionary<string, string> headersDb, List<List<string>> items)
         {
             return new CollectionViewModel
             {
@@ -31,7 +33,8 @@ namespace CollectionHub.Domain.Converters
                 Name = collectionDb.Name,
                 Description = collectionDb.Description,
                 ItemsDataTypes = GetItemsDataTypes(),
-                AllHeaders = GetItemHeaders(headersDb)
+                AllHeaders = GetItemHeaders(headersDb),
+                Items = items
             };
         }
 
@@ -54,8 +57,12 @@ namespace CollectionHub.Domain.Converters
                 { nameof(ItemDb.Name), nameof(ItemDb.Name) },
                 { nameof(ItemDb.Tags), nameof(ItemDb.Tags) }
             };
+
             foreach (var item in headersDb)
+            {
                 predefinedHeaders.Add(item.Key, item.Value);
+            }
+
             return predefinedHeaders;
         }
     }

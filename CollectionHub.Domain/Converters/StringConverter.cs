@@ -1,7 +1,6 @@
 ﻿using CollectionHub.DataManagement;
 using CollectionHub.Models;
 using CollectionHub.Models.Enums;
-using System.Reflection;
 
 namespace CollectionHub.Domain.Converters
 {
@@ -21,12 +20,17 @@ namespace CollectionHub.Domain.Converters
         public static DataType ToDataType(this string dataType) =>
             dataType switch
             {
-                "String" or nameof(CollectionDb.String1Name) or nameof(CollectionDb.String2Name) or nameof(CollectionDb.String3Name)
-                or nameof(ItemDb.Name) or nameof(ItemDb.Tags) => DataType.String,
+                "String" or nameof(CollectionDb.String1Name)
+                or nameof(CollectionDb.String2Name) or nameof(CollectionDb.String3Name) or nameof(ItemDb.Name) or nameof(ItemDb.Tags) => DataType.String,
+
                 "Integer" or nameof(CollectionDb.Int1Name) or nameof(CollectionDb.Int2Name) or nameof(CollectionDb.Int3Name) => DataType.Integer,
+
                 "Text" or nameof(CollectionDb.Text1Name) or nameof(CollectionDb.Text2Name) or nameof(CollectionDb.Text3Name) => DataType.Text,
+
                 "Bool" or nameof(CollectionDb.Bool1Name) or nameof(CollectionDb.Bool2Name) or nameof(CollectionDb.Bool3Name) => DataType.Bool,
+
                 "Date" or nameof(CollectionDb.Date1Name) or nameof(CollectionDb.Date2Name) or nameof(CollectionDb.Date3Name) => DataType.Date,
+
                 _ => throw new NotSupportedException()
             };
 
@@ -55,13 +59,31 @@ namespace CollectionHub.Domain.Converters
         {
             return type switch
             {
-                _ when type == typeof(string) => value,
-                _ when type == typeof(int?) => int.Parse(value),
-                _ when type == typeof(bool?) => bool.Parse(value),
-                _ when type == typeof(DateTimeOffset?) => DateTimeOffset.Parse(value),
+                _ when type == typeof(string) => value == string.Empty ? "-" : value,
+                _ when type == typeof(long?) => value == string.Empty ? ulong.MinValue : long.Parse(value),
+                _ when type == typeof(bool?) => value != string.Empty,
+                _ when type == typeof(DateTimeOffset?) => DateTimeOffset.TryParse(value, out var dateTimeOffsetValue) ? (DateTimeOffset?)dateTimeOffsetValue : DateTimeOffset.MinValue,
 
                 _ => value
             };
         }
+
+        public static string[] GetCollectionFieldNames() =>
+            [
+                nameof(CollectionDb.String1Name),
+                nameof(CollectionDb.String2Name),
+                nameof(CollectionDb.String3Name),
+                nameof(CollectionDb.Int1Name),
+                nameof(CollectionDb.Int2Name),
+                nameof(CollectionDb.Int3Name),
+                nameof(CollectionDb.Text1Name),
+                nameof(CollectionDb.Text2Name),
+                nameof(CollectionDb.Text3Name),
+                nameof(CollectionDb.Bool1Name),
+                nameof(CollectionDb.Bool2Name),
+                nameof(CollectionDb.Bool3Name),
+                nameof(CollectionDb.Date1Name),
+                nameof(CollectionDb.Date2Name),
+                nameof(CollectionDb.Date3Name)];
     }
 }

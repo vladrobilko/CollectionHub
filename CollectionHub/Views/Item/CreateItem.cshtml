@@ -25,8 +25,13 @@
                     else if (item.Key.ToDataType() == DataType.Bool)
                     {
                         <div class="form-check">
-                            <input name="@item.Key" type="checkbox" class="form-check-input" id="@item.Value" value="true">
+                            <input type="hidden" name="@item.Key" value="">
+                            <input name="@item.Key" type="checkbox" class="form-check-input" id="@item.Value">
                         </div>
+                    }
+                    else if (item.Key.ToDataType() == DataType.Integer)
+                    {
+                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" id="@item.Value" placeholder="Enter @item.Value">
                     }
                     else
                     {

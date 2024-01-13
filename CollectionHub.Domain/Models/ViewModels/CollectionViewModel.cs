@@ -23,7 +23,7 @@ namespace CollectionHub.Models.ViewModels
 
         public List<SelectListItem>? Categories { get; set; }
 
-        public List<ItemViewModel>? Items { get; set; }
+        public List<List<string>>? Items { get; set; }
 
         public List<SelectListItem>? ItemsDataTypes { get; set; }
 
