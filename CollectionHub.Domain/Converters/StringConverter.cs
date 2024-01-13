@@ -1,5 +1,7 @@
-﻿using CollectionHub.Models;
+﻿using CollectionHub.DataManagement;
+using CollectionHub.Models;
 using CollectionHub.Models.Enums;
+using System.Reflection;
 
 namespace CollectionHub.Domain.Converters
 {
@@ -19,12 +21,47 @@ namespace CollectionHub.Domain.Converters
         public static DataType ToDataType(this string dataType) =>
             dataType switch
             {
-                "String" or "String1Name" or "String2Name" or "String3Name" or "Name" or "Tags" => DataType.String,
-                "Integer" or "Int1Name" or "Int2Name" or "Int3Name" => DataType.Integer,
-                "Text" or "Text1Name" or "Text2Name" or "Text3Name" => DataType.Text,
-                "Bool" or "Bool1Name" or "Bool2Name" or "Bool3Name" => DataType.Bool,
-                "Date" or "Date1Name" or "Date2Name" or "Date3Name" => DataType.Date,
+                "String" or nameof(CollectionDb.String1Name) or nameof(CollectionDb.String2Name) or nameof(CollectionDb.String3Name)
+                or nameof(ItemDb.Name) or nameof(ItemDb.Tags) => DataType.String,
+                "Integer" or nameof(CollectionDb.Int1Name) or nameof(CollectionDb.Int2Name) or nameof(CollectionDb.Int3Name) => DataType.Integer,
+                "Text" or nameof(CollectionDb.Text1Name) or nameof(CollectionDb.Text2Name) or nameof(CollectionDb.Text3Name) => DataType.Text,
+                "Bool" or nameof(CollectionDb.Bool1Name) or nameof(CollectionDb.Bool2Name) or nameof(CollectionDb.Bool3Name) => DataType.Bool,
+                "Date" or nameof(CollectionDb.Date1Name) or nameof(CollectionDb.Date2Name) or nameof(CollectionDb.Date3Name) => DataType.Date,
                 _ => throw new NotSupportedException()
             };
+
+        public static string ToItemDbProperty(this string propertyName) =>
+            propertyName switch
+            {
+                nameof(CollectionDb.String1Name) => nameof(ItemDb.String1Value),
+                nameof(CollectionDb.String2Name) => nameof(ItemDb.String2Value),
+                nameof(CollectionDb.String3Name) => nameof(ItemDb.String3Value),
+                nameof(CollectionDb.Int1Name) => nameof(ItemDb.Int1Value),
+                nameof(CollectionDb.Int2Name) => nameof(ItemDb.Int2Value),
+                nameof(CollectionDb.Int3Name) => nameof(ItemDb.Int3Value),
+                nameof(CollectionDb.Text1Name) => nameof(ItemDb.Text1Value),
+                nameof(CollectionDb.Text2Name) => nameof(ItemDb.Text2Value),
+                nameof(CollectionDb.Text3Name) => nameof(ItemDb.Text3Value),
+                nameof(CollectionDb.Bool1Name) => nameof(ItemDb.Bool1Value),
+                nameof(CollectionDb.Bool2Name) => nameof(ItemDb.Bool2Value),
+                nameof(CollectionDb.Bool3Name) => nameof(ItemDb.Bool3Value),
+                nameof(CollectionDb.Date1Name) => nameof(ItemDb.Date1Value),
+                nameof(CollectionDb.Date2Name) => nameof(ItemDb.Date2Value),
+                nameof(CollectionDb.Date3Name) => nameof(ItemDb.Date3Value),
+                _ => propertyName
+            };
+
+        public static dynamic ToDynamicType(this string value, Type type)
+        {
+            return type switch
+            {
+                _ when type == typeof(string) => value,
+                _ when type == typeof(int?) => int.Parse(value),
+                _ when type == typeof(bool?) => bool.Parse(value),
+                _ when type == typeof(DateTimeOffset?) => DateTimeOffset.Parse(value),
+
+                _ => value
+            };
+        }
     }
 }

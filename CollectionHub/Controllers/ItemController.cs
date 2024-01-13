@@ -8,9 +8,12 @@ namespace CollectionHub.Controllers
     {
         private readonly ICollectionService _collectionService;
 
-        public ItemController(ICollectionService collectionService)
+        private readonly IItemService _itemService;
+
+        public ItemController(ICollectionService collectionService, IItemService itemService)
         {
             _collectionService = collectionService;
+            _itemService = itemService;
         }
 
         [Authorize]
@@ -26,10 +29,7 @@ namespace CollectionHub.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateItem(IFormCollection formCollection)
         {
-            var formDataDictionary = new Dictionary<string, string>();
-
-            foreach (var key in formCollection.Keys)
-                formDataDictionary[key] = formCollection[key];
+            await _itemService.CreateItem(HttpContext.User.Identity.Name, formCollection);
             return View();
         }
     }

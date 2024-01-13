@@ -12,6 +12,8 @@
         <hr />
 
         <form method="post" asp-action="CreateItem">
+            <input type="hidden" name="id" value="@Model.Id" />
+
             @foreach (var item in Model.AllHeaders)
             {
                 <div class="form-group mb-3">

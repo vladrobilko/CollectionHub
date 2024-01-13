@@ -31,7 +31,7 @@ namespace CollectionHub.Domain.Converters
                 Name = collectionDb.Name,
                 Description = collectionDb.Description,
                 ItemsDataTypes = GetItemsDataTypes(),
-                AllHeaders = GetHeaders(headersDb)
+                AllHeaders = GetItemHeaders(headersDb)
             };
         }
 
@@ -47,12 +47,12 @@ namespace CollectionHub.Domain.Converters
             };
         }
 
-        private static Dictionary<string, string> GetHeaders(Dictionary<string, string> headersDb)
+        private static Dictionary<string, string> GetItemHeaders(Dictionary<string, string> headersDb)
         {
             var predefinedHeaders = new Dictionary<string, string>
             {
-                {  "Name", "Name" },
-                { "Tags" ,"Tags"  }
+                { nameof(ItemDb.Name), nameof(ItemDb.Name) },
+                { nameof(ItemDb.Tags), nameof(ItemDb.Tags) }
             };
             foreach (var item in headersDb)
                 predefinedHeaders.Add(item.Key, item.Value);

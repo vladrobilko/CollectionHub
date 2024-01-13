@@ -55,7 +55,7 @@ namespace CollectionHub.Services
 
         public Dictionary<string, string> GetNonNullFieldNames(CollectionDb collection)
         {
-            var propertyNames = GetPropertyNames();
+            var propertyNames = GetCollectionPropertyNames();
             var propertyInfos = collection.GetType().GetProperties();
 
             return propertyInfos
@@ -95,7 +95,7 @@ namespace CollectionHub.Services
 
         private async Task<bool> UpdateCollectionFieldName(DataType type, CollectionDb collection, string name)
         {
-            var propertyNames = type.ToPropertyNames();
+            var propertyNames = type.ToCollectionProperty();
             if (IsFieldExist(propertyNames, collection, name))
             {
                 return false;
@@ -122,24 +122,24 @@ namespace CollectionHub.Services
                 .ToList().Contains(name);
         }
 
-        private string[] GetPropertyNames()
+        private string[] GetCollectionPropertyNames()
         {
             return [
-                "String1Name",
-                "String2Name",
-                "String3Name",
-                "Int1Name",
-                "Int2Name",
-                "Int3Name",
-                "Text1Name",
-                "Text2Name",
-                "Text3Name",
-                "Bool1Name",
-                "Bool2Name",
-                "Bool3Name",
-                "Date1Name",
-                "Date2Name",
-                "Date3Name"];
+                nameof(CollectionDb.String1Name),
+                nameof(CollectionDb.String2Name),
+                nameof(CollectionDb.String3Name),
+                nameof(CollectionDb.Int1Name),
+                nameof(CollectionDb.Int2Name),
+                nameof(CollectionDb.Int3Name),
+                nameof(CollectionDb.Text1Name),
+                nameof(CollectionDb.Text2Name),
+                nameof(CollectionDb.Text3Name),
+                nameof(CollectionDb.Bool1Name),
+                nameof(CollectionDb.Bool2Name),
+                nameof(CollectionDb.Bool3Name),
+                nameof(CollectionDb.Date1Name),
+                nameof(CollectionDb.Date2Name),
+                nameof(CollectionDb.Date3Name)];
         }
     }
 }

@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CollectionHub.Application\CollectionHub.Application.csproj" />
     <ProjectReference Include="..\CollectionHub.Domain\CollectionHub.Domain.csproj" />
     <ProjectReference Include="..\CollectionHub.Infrastructure\CollectionHub.Infrastructure.csproj" />

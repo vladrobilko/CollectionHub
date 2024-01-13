@@ -18,7 +18,8 @@ builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IImageService, ImageService>();
-builder.Services.AddScoped<ICollectionService, CollectionService>();
+builder.Services.AddScoped<ICollectionService, CollectionService>(); 
+builder.Services.AddScoped<IItemService, ItemService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
