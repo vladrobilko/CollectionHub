@@ -145,7 +145,7 @@ namespace CollectionHub.DataManagement
 
                 entity.ToTable("Tag");
 
-                entity.HasIndex(e => e.Name, "tag_name_unique").IsUnique();
+                entity.HasIndex(e => e.Name, "tag_name_unique").IsUnique(false);
 
                 entity.Property(e => e.Id)                    
                     .HasColumnName("id");
