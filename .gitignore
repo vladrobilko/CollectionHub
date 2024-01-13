@@ -368,3 +368,4 @@ FodyWeavers.xsd
 /CollectionHub.Infrastructure/Migrations/20240108103649_init.cs
 /CollectionHub.Infrastructure/Migrations/ApplicationDbContextModelSnapshot.cs
 /CollectionHub.Infrastructure/Migrations/20240112132831_remove-uniue-tag-name.cs
+/CollectionHub.Infrastructure/Migrations/20240112132831_remove-uniue-tag-name.Designer.cs
