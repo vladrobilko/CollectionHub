@@ -20,22 +20,22 @@
                     <label asp-for="@item.Value">@item.Value:</label>
                     @if (item.Key.ToDataType() == DataType.Text)
                     {
-                        <textarea name="@item.Key" rows="4" cols="50" class="form-control" placeholder="Enter @item.Key.ToString()"></textarea>
+                        <textarea name="@item.Key" rows="4" cols="50" class="form-control" placeholder="Enter @item.Value"></textarea>
                     }
                     else if (item.Key.ToDataType() == DataType.Bool)
                     {
                         <div class="form-check">
                             <input type="hidden" name="@item.Key" value="">
-                            <input name="@item.Key" type="checkbox" class="form-check-input" id="@item.Value">
+                            <input name="@item.Key" type="checkbox" class="form-check-input">
                         </div>
                     }
                     else if (item.Key.ToDataType() == DataType.Integer)
                     {
-                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" id="@item.Value" placeholder="Enter @item.Value">
+                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control">
                     }
                     else
                     {
-                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" id="@item.Value" placeholder="Enter @item.Value">
+                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" placeholder="Enter @item.Value">
                     }
                 </div>
 

@@ -21,15 +21,20 @@ namespace CollectionHub.Domain.Converters
             dataType switch
             {
                 "String" or nameof(CollectionDb.String1Name)
-                or nameof(CollectionDb.String2Name) or nameof(CollectionDb.String3Name) or nameof(ItemDb.Name) or nameof(ItemDb.Tags) => DataType.String,
+                or nameof(CollectionDb.String2Name) or nameof(CollectionDb.String3Name) or nameof(ItemDb.Name) or nameof(ItemDb.Tags) or
+                nameof(ItemDb.String1Value) or nameof(ItemDb.String2Value) or nameof(ItemDb.String3Value) => DataType.String,
 
-                "Integer" or nameof(CollectionDb.Int1Name) or nameof(CollectionDb.Int2Name) or nameof(CollectionDb.Int3Name) => DataType.Integer,
+                "Integer" or nameof(CollectionDb.Int1Name) or nameof(CollectionDb.Int2Name) or nameof(CollectionDb.Int3Name) or
+                nameof(ItemDb.Int1Value) or nameof(ItemDb.Int2Value) or nameof(ItemDb.Int3Value) => DataType.Integer,
 
-                "Text" or nameof(CollectionDb.Text1Name) or nameof(CollectionDb.Text2Name) or nameof(CollectionDb.Text3Name) => DataType.Text,
+                "Text" or nameof(CollectionDb.Text1Name) or nameof(CollectionDb.Text2Name) or nameof(CollectionDb.Text3Name) or
+                nameof(ItemDb.Text1Value) or nameof(ItemDb.Text2Value) or nameof(ItemDb.Text3Value) => DataType.Text,
 
-                "Bool" or nameof(CollectionDb.Bool1Name) or nameof(CollectionDb.Bool2Name) or nameof(CollectionDb.Bool3Name) => DataType.Bool,
+                "Bool" or nameof(CollectionDb.Bool1Name) or nameof(CollectionDb.Bool2Name) or nameof(CollectionDb.Bool3Name) or
+                nameof(ItemDb.Bool1Value) or nameof(ItemDb.Bool2Value) or nameof(ItemDb.Bool3Value) => DataType.Bool,
 
-                "Date" or nameof(CollectionDb.Date1Name) or nameof(CollectionDb.Date2Name) or nameof(CollectionDb.Date3Name) => DataType.Date,
+                "Date" or nameof(CollectionDb.Date1Name) or nameof(CollectionDb.Date2Name) or nameof(CollectionDb.Date3Name) or
+                nameof(ItemDb.Date1Value) or nameof(ItemDb.Date2Value) or nameof(ItemDb.Date3Value) => DataType.Date,
 
                 _ => throw new NotSupportedException()
             };

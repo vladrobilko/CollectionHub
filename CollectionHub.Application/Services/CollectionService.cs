@@ -23,6 +23,32 @@ namespace CollectionHub.Services
             _itemService = itemService;
         }
 
+        public async Task<CollectionViewModel> GetEmptyCollectionViewModel()
+        {
+            var categories = await GetAllCategories();
+
+            return new CollectionViewModel
+            {
+                Categories = categories.ToSelectListItem()
+            };
+        }
+
+        public async Task EditCollection(string userName, CollectionViewModel collectionViewModel)
+        {
+            var collectionDb = await _context.Collections
+                .Where(x => x.User.UserName == userName)
+                .FirstAsync(x => x.Id == collectionViewModel.Id);
+
+            var categoryDb = await _context.Categories.FirstAsync(x => x.Name == collectionViewModel.Category);
+
+            collectionDb.Name = collectionViewModel.Name;
+            collectionDb.Description = collectionViewModel.Description;
+            collectionDb.CategoryId = categoryDb.Id;
+            collectionDb.ImageUrl = collectionViewModel.ImageUrl;
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<bool> AddCollectionItemField(string userName, long id, DataType type, string name)
         {
             var collection = await _context.Collections
@@ -47,14 +73,17 @@ namespace CollectionHub.Services
         public async Task<CollectionViewModel> GetUserCollection(string userName, long id)
         {
             var collection = await _context.Collections
+                .Include(x => x.Category)
                 .Where(x => x.User.UserName == userName)
                 .FirstAsync(x => x.Id == id);
+
+            var categories = await GetAllCategories();
 
             var nonNullFieldNames = GetNonNullFieldNames(collection);
 
             var items = await _itemService.GetCollectionItems(id, new Dictionary<string, string>(nonNullFieldNames));
 
-            return collection.ToCollectionViewModel(nonNullFieldNames, items);
+            return collection.ToCollectionViewModel(nonNullFieldNames, items, categories);
         }
 
         public Dictionary<string, string> GetNonNullFieldNames(CollectionDb collection)
@@ -93,16 +122,16 @@ namespace CollectionHub.Services
             await _context.SaveChangesAsync();
         }
 
-        private CollectionDb CreateCollectionDbInstance(UserDb user, CollectionViewModel collection, CategoryDb category) =>        
+        private CollectionDb CreateCollectionDbInstance(UserDb user, CollectionViewModel collection, CategoryDb category) =>
              new CollectionDb
-            {
-                UserId = user.Id,
-                Name = collection.Name,
-                Description = collection.Description,
-                ImageUrl = collection.ImageUrl,
-                CategoryId = category.Id,
-                CreationDate = DateTimeOffset.Now
-            };        
+             {
+                 UserId = user.Id,
+                 Name = collection.Name,
+                 Description = collection.Description,
+                 ImageUrl = collection.ImageUrl,
+                 CategoryId = category.Id,
+                 CreationDate = DateTimeOffset.Now
+             };
 
         private async Task<bool> UpdateCollectionFieldName(DataType type, CollectionDb collection, string name)
         {

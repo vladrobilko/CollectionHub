@@ -16,20 +16,20 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<IActionResult> MyCollections()
         {
-            var collections = await _collectionService.GetUserCollections(HttpContext.User.Identity.Name);
-            return View(collections);
+            return View(await _collectionService.GetUserCollections(HttpContext.User.Identity.Name));
         }
 
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CreateCollection()
         {
-            var categories = await _collectionService.GetAllCategories();
-            var viewModel = new CollectionViewModel { Categories = categories.ToSelectListItem() };
+            var viewModel = await _collectionService.GetEmptyCollectionViewModel();
+
             if (TempData.TryGetValue("ImageUrl", out var imagePath))
             {
                 viewModel.ImageUrl = (string)imagePath;
             }
+
             return View(viewModel);
         }
 
@@ -42,9 +42,8 @@ namespace CollectionHub.Controllers
                 await _collectionService.CreateCollection(collectionViewModel, HttpContext.User.Identity.Name);
                 return RedirectToAction("MyCollections");
             }
-            var categories = await _collectionService.GetAllCategories();
-            collectionViewModel.Categories = categories.ToSelectListItem();
-            return View(collectionViewModel);
+
+            return View(await _collectionService.GetEmptyCollectionViewModel());
         }
 
         [Authorize]
@@ -52,12 +51,13 @@ namespace CollectionHub.Controllers
         public async Task<IActionResult> GetCollection(int id)
         {
             var errorMessage = TempData["ErrorMessage"] as string;
+
             if (!string.IsNullOrEmpty(errorMessage))
             {
                 ModelState.AddModelError("error", errorMessage);
             }
-            var collection = await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, id);
-            return View(collection);
+
+            return View(await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, id));
         }
 
         [Authorize]
@@ -85,7 +85,35 @@ namespace CollectionHub.Controllers
         public async Task<IActionResult> DeleteCollection(long id)
         {
             await _collectionService.DeleteCollection(id);
+
             return RedirectToAction("MyCollections");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> EditCollection(long id)
+        {
+            var collection = await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, id);
+
+            if (TempData.TryGetValue("ImageUrl", out var imagePath))
+            {
+                collection.ImageUrl = (string)imagePath;
+            }
+
+            return View(collection);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditCollection(CollectionViewModel collectionViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                await _collectionService.EditCollection(HttpContext.User.Identity.Name, collectionViewModel);
+                return RedirectToAction("MyCollections");
+            }
+
+            return View(await _collectionService.GetEmptyCollectionViewModel());
         }
     }
 }

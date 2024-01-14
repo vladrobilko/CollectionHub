@@ -25,7 +25,7 @@ namespace CollectionHub.Domain.Converters
             return result;
         }
 
-        public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb, Dictionary<string, string> headersDb, List<List<string>> items)
+        public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb, Dictionary<string, string> headersDb, List<List<string>> items, List<string> categories)
         {
             return new CollectionViewModel
             {
@@ -34,7 +34,10 @@ namespace CollectionHub.Domain.Converters
                 Description = collectionDb.Description,
                 ItemsDataTypes = GetItemsDataTypes(),
                 AllHeaders = GetItemHeaders(headersDb),
-                Items = items
+                Items = items, 
+                Category = collectionDb.Category.Name,
+                ImageUrl = collectionDb.ImageUrl,
+                Categories = categories.ToSelectListItem()
             };
         }
 

@@ -1,21 +1,23 @@
 ﻿@model CollectionHub.Models.ViewModels.CollectionViewModel
 @{
-    ViewData["Title"] = "Create collection";
+    ViewData["Title"] = "Edit collection";
 }
 
 <div class="row justify-content-center mb-3">
     <div class="col-7">
-        <h2>@Localizer["createCollection"]</h2>
+        <h2>CREATE COLLECTION</h2>
     </div>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-12 col-sm-6 col-md-3">
-        <form id="imageForm" method="post" action="@Url.Action("UploadImage", "Image")" enctype="multipart/form-data">
+        <form id="imageForm" method="post" action="@Url.Action("UpdateImage", "Image")" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             @if (!string.IsNullOrEmpty(Model.ImageUrl))
             {
-                <img src="@Url.Content(Model.ImageUrl)" alt="Uploaded Image" class="uploaded-image" />
+                <label for="fileInput">
+                    <img src="@Url.Content(Model.ImageUrl)" alt="Uploaded Image" class="clicked-image" />
+                </label>
             }
             else
             {
@@ -23,37 +25,37 @@
                     <img src="~/AddImage.png" alt="Add image" class="clicked-image" />
                 </label>
             }
+            <input type="hidden" id="collectionId" name="CollectionId" value="@Model.Id" />
+
             <input type="file" id="fileInput" name="File" style="display: none;" onchange="submitForm()" />
 
             <button type="submit" id="submitButton" style="display: none;"></button>
         </form>
     </div>
     <div class="col-12 col-sm-6 col-md-4">
-        <form id="createCollectionForm" method="post" asp-action="CreateCollection">
-
-            <input type="hidden" asp-for="Categories" value="@Model.Categories" />
+        <form id="createCollectionForm" method="post" asp-action="EditCollection">
 
             <div class="form-group mb-3">
-                <label asp-for="Category">@Localizer["category"]</label>
+                <label asp-for="Category">Category:</label>
                 <select class="form-select" asp-for="Category" asp-items="@Model.Categories">
-                    <option value="" selected>@Localizer["chooseCategory"]</option>
+                    <option value="" selected>Choose category</option>
                 </select>
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Name">@Localizer["name"]</label>
+                <label asp-for="Name">Name:</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Description">@Localizer["description"]</label>
-                <textarea asp-for="Description" class="form-control" rows="4" cols="30"></textarea>
+                <label asp-for="Description">Description:</label>
+                <textarea asp-for="Description" class="form-control" rows="4" cols="30">@Model.Description</textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="w-100 btn btn-lg btn-primary" onclick="prepareFormData()">@Localizer["create"]</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary" onclick="prepareFormData()">Edit</button>
         </form>
     </div>
 </div>

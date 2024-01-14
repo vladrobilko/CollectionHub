@@ -9,7 +9,7 @@
         <h2 class="text-left text-uppercase mb-4">@Model.Name</h2>
         <p>@Model.Description</p>
     </div>
-    <div class="col-md-4 offset-md-1 justify-content-center">
+    <div class="col-md-4 offset-md-1">
         <h2 class="text-uppercase mb-4">Add table column here</h2>
         <form method="post" asp-action="AddCollectionItemField">
             <input type="hidden" name="collectionId" value="@Model.Id" />
@@ -30,30 +30,32 @@
             <span class="text-danger">@Html.ValidationMessage("error")</span>
         </form>
     </div>
-    <div class="col-md-2 mb-3 p-0 justify-content-center">
-        <a class="btn btn-primary rounded-pill" href="@Url.Action("CreateItem", "Item", new { collectionId = Model.Id})">Create new item</a>
-    </div>
-    <div class="col-md-1 p-0 mb-3">
-        <form method="post" asp-controller="Item" asp-action="EditItem">
+
+    <div class="col-md-4 d-flex">
+        <a class="btn btn-primary rounded-pill me-2" href="@Url.Action("CreateItem", "Item", new { collectionId = Model.Id})">Create</a>
+
+        <form method="get" asp-controller="Item" asp-action="EditItem">
             <input type="hidden" name="collectionId" value="@Model.Id" />
             <input type="hidden" name="selectedItemId" id="editSelectedItemId" />
-            <button type="submit" class="btn btn-secondary rounded-pill">Edit</button>
+            <button type="submit" class="btn btn-secondary rounded-pill me-2">Edit</button>
         </form>
-    </div>
-    <div class="col-md-1 p-0 mb-3">
+
         <form method="post" asp-controller="Item" asp-action="DeleteItem">
             <input type="hidden" name="collectionId" value="@Model.Id" />
             <input type="hidden" name="selectedItemId" id="deleteSelectedItemId" />
-            <button type="submit" class="btn btn-danger rounded-pill">Delete</button>
+            <button type="submit" class="btn btn-danger rounded-pill me-2">Delete</button>
         </form>
+
+        <a class="btn btn-success rounded-pill" href="@Url.Action("Export", "Collection", new { collectionId = Model.Id})">Export</a>
     </div>
 </div>
+
 
 <div class="table-responsive">
     <table class="table">
         <thead>
             <tr>
-                <th><input type="hidden"/></th>
+                <th><input type="hidden" /></th>
                 <th scope="col">#</th>
                 @foreach (var header in Model.AllHeaders)
                 {
@@ -73,7 +75,7 @@
                         <td>@(i + 1)</td>
                         @for (int j = 1; j < rowData.Count; j++)
                         {
-                            <td>@rowData[j]</td>                            
+                            <td>@rowData[j]</td>
                         }
                     </tr>
                 }
@@ -85,7 +87,6 @@
 @section scripts {
     <script>
         $(document).ready(function () {
-            // Update hidden field when radio button is changed
             $(".item-radio").change(function () {
                 var selectedId = $(".item-radio:checked").data("item-id");
                 $("#editSelectedItemId").val(selectedId);

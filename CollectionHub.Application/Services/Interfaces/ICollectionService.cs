@@ -16,5 +16,9 @@ namespace CollectionHub.Services.Interfaces
         Task<bool> AddCollectionItemField(string userName, long id, DataType type, string name);
 
         Task DeleteCollection(long id);
+
+        Task EditCollection(string userName, CollectionViewModel collectionViewModel);
+
+        Task<CollectionViewModel> GetEmptyCollectionViewModel();
     }
 }

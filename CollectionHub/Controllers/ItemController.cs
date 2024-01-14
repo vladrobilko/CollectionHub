@@ -30,17 +30,28 @@ namespace CollectionHub.Controllers
         public async Task<IActionResult> CreateItem(IFormCollection formCollection)
         {
             var collectionId = await _itemService.CreateItem(HttpContext.User.Identity.Name, formCollection);
+
             return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
         }
 
         [Authorize]
-        [HttpPost]
-        public IActionResult EditItem(int collectionId, int selectedItemId)
+        [HttpGet]
+        public async Task<ActionResult> EditItem(int collectionId, int selectedItemId)
         {
+            var item = await _itemService.GetItem(selectedItemId, collectionId, HttpContext.User.Identity.Name);
 
-            return RedirectToAction("Edit", "Item", new { collectionId = collectionId, itemId = selectedItemId });
+            return View(item);
         }
-        
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditItem(IFormCollection formCollection)
+        {
+            var collectionId = await _itemService.EditItem(HttpContext.User.Identity.Name, formCollection);
+
+            return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> DeleteItem(int collectionId, int selectedItemId)
