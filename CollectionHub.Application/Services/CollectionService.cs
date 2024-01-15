@@ -79,24 +79,11 @@ namespace CollectionHub.Services
 
             var categories = await GetAllCategories();
 
-            var nonNullFieldNames = GetNonNullFieldNames(collection);
+            var nonNullFieldNames = collection.GetNonNullStringFields();
 
             var items = await _itemService.GetCollectionItems(id, new Dictionary<string, string>(nonNullFieldNames));
 
             return collection.ToCollectionViewModel(nonNullFieldNames, items, categories);
-        }
-
-        public Dictionary<string, string> GetNonNullFieldNames(CollectionDb collection)
-        {
-            var propertyNames = StringConverter.GetCollectionFieldNames();
-            var propertyInfos = collection.GetType().GetProperties();
-
-            return propertyInfos
-                .Where(property =>
-                    propertyNames.Contains(property.Name) &&
-                    property.PropertyType == typeof(string) &&
-                    property.GetValue(collection) != null)
-                .ToDictionary(property => property.Name, property => (string)property.GetValue(collection)!);
         }
 
         public async Task CreateCollection(CollectionViewModel collection, string userName)
@@ -132,6 +119,8 @@ namespace CollectionHub.Services
                  CategoryId = category.Id,
                  CreationDate = DateTimeOffset.Now
              };
+
+
 
         private async Task<bool> UpdateCollectionFieldName(DataType type, CollectionDb collection, string name)
         {

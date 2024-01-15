@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CollectionHub.Models.ViewModels;
+using Microsoft.AspNetCore.Http;
 
 namespace CollectionHub.Services.Interfaces
 {
@@ -9,5 +10,9 @@ namespace CollectionHub.Services.Interfaces
         Task<List<List<string>>> GetCollectionItems(long collectionId, Dictionary<string, string> fieldNames);
 
         Task DeleteItem(long id);
+
+        Task<ItemViewModel> GetItem(long itemId, long collectionId, string userName);
+
+        Task<long> EditItem(string userName, IFormCollection formCollection);
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using CollectionHub.Domain.Converters;
 using System.Reflection;
+using CollectionHub.Models.ViewModels;
 
 namespace CollectionHub.Services
 {
@@ -11,18 +12,9 @@ namespace CollectionHub.Services
     {
         private readonly ApplicationDbContext _context;
 
-        public ItemService(ApplicationDbContext context) => _context = context;
-
-        public async Task DeleteItem(long id)
+        public ItemService(ApplicationDbContext context)
         {
-            var item = await _context.Items
-                .Include(x => x.Tags)
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-            _context.Tags.RemoveRange(item.Tags);
-            _context.Items.Remove(item);
-
-            await _context.SaveChangesAsync();
+            _context = context;
         }
 
         public async Task<List<List<string>>> GetCollectionItems(long collectionId, Dictionary<string, string> fieldNames)
@@ -32,12 +24,13 @@ namespace CollectionHub.Services
                 .Include(item => item.Tags)
                 .ToListAsync();
 
-            var itemProperties = ToItemPropertyNames(fieldNames);
+            var itemProperties = fieldNames.ToItemPropertyNames();
 
             var result = new List<List<string>>();
 
             foreach (var item in items)
             {
+                //
                 var itemValues = new List<string>
                 {
                     item.Id.ToString(),
@@ -55,6 +48,7 @@ namespace CollectionHub.Services
                         itemValues.Add(value);
                     }
                 }
+                //
 
                 result.Add(itemValues);
             }
@@ -62,11 +56,95 @@ namespace CollectionHub.Services
             return result;
         }
 
+        public async Task<ItemViewModel> GetItem(long itemId, long collectionId, string userName)
+        {
+            var collection = await _context.Collections
+                .Include(x => x.Items)
+                .ThenInclude(x => x.Tags)
+                .Where(x => x.User.UserName == userName)
+                .FirstAsync(x => x.Id == collectionId);
+
+            var nonNullFieldNames = collection.GetNonNullStringFields();
+            var itemProperties =  nonNullFieldNames.ToDictionary(
+                    kvp => kvp.Key.ToItemDbProperty(),
+                    kvp => kvp.Value
+                );
+            
+            var item = collection.Items.First(x => x.Id == itemId);
+
+            var result = new Dictionary<string, Dictionary<string, string>>
+            {
+                {
+                    nameof(ItemDb.Name), new Dictionary<string, string>
+                    {
+                        { nameof(ItemDb.Name), item.Name }
+                    }
+                },
+                {
+                    nameof(ItemDb.Tags), new Dictionary<string, string>
+                    {
+                        { nameof(ItemDb.Tags), string.Join(", ", item.Tags.Select(tag => "#" + tag.Name)) }
+                    }
+                },
+            };
+
+            foreach (var fieldName in itemProperties.Keys)
+            {
+                var propertyInfo = typeof(ItemDb).GetProperty(fieldName);
+
+                if (propertyInfo != null)
+                {
+                    var value = GetPropertyValueAsString(propertyInfo, item);
+                    result.Add(fieldName, new Dictionary<string, string>
+                    {
+                        { itemProperties[fieldName], value }
+                    });
+                }
+            }
+
+            return new ItemViewModel()
+            {
+                Id = itemId,
+                CollectionId = collectionId,
+                AllHeadersWithValues = result
+            };
+        }
+
+        public async Task<long> EditItem(string userName, IFormCollection formCollection)
+        {
+            var itemId = formCollection.ToId();
+            var fieldsWithValues = formCollection.ToDictionary();
+
+            var itemToUpdate = await _context.Items
+                .Include(x => x.Tags)  
+                .FirstAsync(x => x.Id == itemId);
+
+            var itemDbProperties = typeof(ItemDb).GetProperties();
+
+            foreach (var item in fieldsWithValues)
+            {
+                var property = itemDbProperties.FirstOrDefault(p => p.Name == item.Key);
+
+                if (item.Key == nameof(ItemDb.Tags))
+                {
+                    UpdateTags(itemToUpdate, item.Value);
+                }
+                else
+                {
+                    SetProperty(item, property, itemToUpdate);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return itemToUpdate.CollectionId;
+        }
+
         public async Task<long> CreateItem(string userName, IFormCollection formCollection)
         {
-            var collectionId = ExtractCollectionId(formCollection);
+            var collectionId = formCollection.ToId();
 
-            var fieldsWithValues = ConvertFormCollectionToDictionary(formCollection);
+            var fieldsWithValues = formCollection.ToDictionary();
 
             await CheckIsUserHasCollection(userName, collectionId);
 
@@ -77,19 +155,13 @@ namespace CollectionHub.Services
             {
                 var property = itemDbProperties.FirstOrDefault(p => p.Name == item.Key.ToItemDbProperty());
 
-                if (item.Key == "Tags")
+                if (item.Key == nameof(ItemDb.Tags))
                 {
-                    newItem.Tags = ParseTags(item.Value);
+                    newItem.Tags = item.Value.ToTags();
                 }
                 else
                 {
-                    if (property != null)
-                    {
-                        var value = item.Value.ToDynamicType(property.PropertyType);
-                        var valueRes = ChangeType(value, property.PropertyType);
-
-                        property.SetValue(newItem, valueRes);
-                    }
+                    SetProperty(item, property, newItem);
                 }
             }
 
@@ -102,7 +174,34 @@ namespace CollectionHub.Services
             return collectionId;
         }
 
-        private static string GetPropertyValueAsString(PropertyInfo propertyInfo, ItemDb item)
+
+
+        private void SetProperty(KeyValuePair<string, string> item, PropertyInfo property, ItemDb itemToSet)
+        {
+            if (property != null)
+            {
+                var value = item.Value.ToDynamicType(property.PropertyType);
+                var valueRes = ChangeType(value, property.PropertyType);
+                property.SetValue(itemToSet, valueRes);
+            }
+        }
+
+        private void UpdateTags(ItemDb itemToUpdate, string tagsValue)
+        {
+            var newTags = tagsValue.ToTags();
+
+            var existingTags = itemToUpdate.Tags.ToList();
+
+            foreach (var newTag in newTags)
+            {
+                if (!existingTags.Any(existingTag => existingTag.Name == newTag.Name))
+                {
+                    itemToUpdate.Tags.Add(newTag);
+                }
+            }
+        }
+
+        private string GetPropertyValueAsString(PropertyInfo propertyInfo, ItemDb item)
         {
             var value = propertyInfo.GetValue(item);
 
@@ -114,41 +213,7 @@ namespace CollectionHub.Services
             return value?.ToString() ?? "-";
         }
 
-        private List<string> ToItemPropertyNames(Dictionary<string, string> collectionNames)
-        {
-            var result = new List<string>();
-
-            foreach (var item in collectionNames.Keys)
-            {
-                result.Add(item.ToItemDbProperty());
-            }
-
-            return result;
-        }
-
-        private long ExtractCollectionId(IFormCollection formCollection)
-        {
-            if (formCollection.TryGetValue("id", out var idString) && long.TryParse(idString, out var collectionId))
-            {
-                return collectionId;
-            }
-
-            throw new FormatException();
-        }
-
-        private Dictionary<string, string> ConvertFormCollectionToDictionary(IFormCollection formCollection)
-        {
-            var fieldsWithValues = new Dictionary<string, string>();
-
-            foreach (var key in formCollection.Keys)
-            {
-                fieldsWithValues[key] = formCollection[key];
-            }
-
-            return fieldsWithValues;
-        }
-
-        public static object ChangeType(object value, Type conversion)
+        private object ChangeType(object value, Type conversion)
         {
             var t = conversion;
 
@@ -165,25 +230,24 @@ namespace CollectionHub.Services
             return Convert.ChangeType(value, t);
         }
 
-        private List<TagDb> ParseTags(string tags)
-        {
-            char[] separators = { ',', ' ' };
 
-            var tagArray = tags.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-
-            return tagArray
-                .Where(tag => !string.IsNullOrWhiteSpace(tag) && IsContainsLettersOrNumbers(tag))
-                .Select(tag => new TagDb { Name = tag })
-                .ToList();
-        }
-
-        private bool IsContainsLettersOrNumbers(string input) => input.Any(char.IsLetterOrDigit);
-
-        public async Task CheckIsUserHasCollection(string userName, long collectionId)
+        private async Task CheckIsUserHasCollection(string userName, long collectionId)
         {
             var collection = await _context.Collections
                 .Where(x => x.User.UserName == userName)
                 .FirstOrDefaultAsync(x => x.Id == collectionId) ?? throw new AccessViolationException();
+        }
+
+        public async Task DeleteItem(long id)
+        {
+            var item = await _context.Items
+                .Include(x => x.Tags)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            _context.Tags.RemoveRange(item.Tags);
+            _context.Items.Remove(item);
+
+            await _context.SaveChangesAsync();
         }
     }
 }

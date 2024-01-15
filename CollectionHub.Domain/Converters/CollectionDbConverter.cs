@@ -25,6 +25,19 @@ namespace CollectionHub.Domain.Converters
             return result;
         }
 
+        public static Dictionary<string, string> GetNonNullStringFields(this CollectionDb collection)
+        {
+            var propertyNames = StringConverter.GetCollectionFieldNames();
+            var propertyInfos = collection.GetType().GetProperties();
+
+            return propertyInfos
+                .Where(property =>
+                    propertyNames.Contains(property.Name) &&
+                    property.PropertyType == typeof(string) &&
+                    property.GetValue(collection) != null)
+                .ToDictionary(property => property.Name, property => (string)property.GetValue(collection)!);
+        }
+
         public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb, Dictionary<string, string> headersDb, List<List<string>> items, List<string> categories)
         {
             return new CollectionViewModel

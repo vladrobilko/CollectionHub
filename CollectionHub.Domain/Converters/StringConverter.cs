@@ -17,6 +17,18 @@ namespace CollectionHub.Domain.Converters
                 _ => throw new NotSupportedException()
             };
 
+        public static List<TagDb> ToTags(this string tags)
+        {
+            char[] separators = { ',', ' ' };
+
+            var tagArray = tags.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
+            return tagArray
+                .Where(tag => !string.IsNullOrWhiteSpace(tag) && IsContainsLettersOrNumbers(tag))
+                .Select(tag => new TagDb { Name = tag.TrimStart('#') })
+                .ToList();
+        }
+
         public static DataType ToDataType(this string dataType) =>
             dataType switch
             {
@@ -90,5 +102,7 @@ namespace CollectionHub.Domain.Converters
                 nameof(CollectionDb.Date1Name),
                 nameof(CollectionDb.Date2Name),
                 nameof(CollectionDb.Date3Name)];
+
+        private static bool IsContainsLettersOrNumbers(string input) => input.Any(char.IsLetterOrDigit);
     }
 }
