@@ -20,5 +20,9 @@ namespace CollectionHub.Services.Interfaces
         Task EditCollection(string userName, CollectionViewModel collectionViewModel);
 
         Task<CollectionViewModel> GetEmptyCollectionViewModel();
+
+        Task<List<CollectionViewModel>> GetLargestCollections();
+
+        Task<CollectionViewModel> GetCollectionForRead(long id);
     }
 }

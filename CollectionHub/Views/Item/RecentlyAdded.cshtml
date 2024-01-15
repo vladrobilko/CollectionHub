@@ -1,0 +1,38 @@
+﻿@model List<CollectionHub.Models.ViewModels.ItemViewModel>
+
+@{
+    ViewData["Title"] = "Recently added";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="text-left text-uppercase mb-4">Recently added items</h2>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Item Name</th>
+                        <th scope="col">Collection Name</th>
+                        <th scope="col">Author</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        for (int i = 0; i < Model.Count; i++)
+                        {
+                            <tr>
+                                <td>@(i + 1)</td>
+                                <td><a href="@Url.Action("ActionName", "ControllerName", new { id = Model[i].Id })" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">@Model[i].Name</a></td>
+                                <td>@Model[i].CollectionName</td>
+                                <td>@Model[i].AuthorName</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

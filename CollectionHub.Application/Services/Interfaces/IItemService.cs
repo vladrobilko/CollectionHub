@@ -14,5 +14,7 @@ namespace CollectionHub.Services.Interfaces
         Task<ItemViewModel> GetItem(long itemId, long collectionId, string userName);
 
         Task<long> EditItem(string userName, IFormCollection formCollection);
+
+        Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead();
     }
 }

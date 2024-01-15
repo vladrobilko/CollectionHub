@@ -12,6 +12,18 @@ namespace CollectionHub.Controllers
 
         public CollectionController(ICollectionService collectionService) => _collectionService = collectionService;
 
+        [HttpGet]
+        public async Task<IActionResult> LargestCollections()
+        {
+            return View(await _collectionService.GetLargestCollections());
+        } 
+
+        [HttpGet]
+        public async Task<IActionResult> GetCollectionForRead(int id)
+        {
+            return View(await _collectionService.GetCollectionForRead(id));
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> MyCollections()

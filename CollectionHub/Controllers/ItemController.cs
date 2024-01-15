@@ -16,6 +16,12 @@ namespace CollectionHub.Controllers
             _itemService = itemService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> RecentlyAdded()
+        {
+            return View(await _itemService.GetRecentlyAddedItemsForRead());
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CreateItem(long collectionId)

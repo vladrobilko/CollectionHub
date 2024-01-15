@@ -17,9 +17,22 @@ namespace CollectionHub.Services
             _context = context;
         }
 
+        public async Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead()
+        {
+            var items = await _context.Items
+             .AsNoTracking()
+             .Include(x => x.Collection)
+             .Include(x => x.Collection.User)
+             .OrderByDescending(x => x.CreationDate)
+             .ToListAsync();
+
+            return items.ToItemViewModelList();
+        }
+
         public async Task<List<List<string>>> GetCollectionItems(long collectionId, Dictionary<string, string> fieldNames)
         {
             var items = await _context.Items
+                .AsNoTracking()
                 .Where(item => item.CollectionId == collectionId)
                 .Include(item => item.Tags)
                 .ToListAsync();
@@ -59,17 +72,18 @@ namespace CollectionHub.Services
         public async Task<ItemViewModel> GetItem(long itemId, long collectionId, string userName)
         {
             var collection = await _context.Collections
+                .AsNoTracking()
                 .Include(x => x.Items)
                 .ThenInclude(x => x.Tags)
                 .Where(x => x.User.UserName == userName)
                 .FirstAsync(x => x.Id == collectionId);
 
             var nonNullFieldNames = collection.GetNonNullStringFields();
-            var itemProperties =  nonNullFieldNames.ToDictionary(
+            var itemProperties = nonNullFieldNames.ToDictionary(
                     kvp => kvp.Key.ToItemDbProperty(),
                     kvp => kvp.Value
                 );
-            
+
             var item = collection.Items.First(x => x.Id == itemId);
 
             var result = new Dictionary<string, Dictionary<string, string>>
@@ -116,7 +130,7 @@ namespace CollectionHub.Services
             var fieldsWithValues = formCollection.ToDictionary();
 
             var itemToUpdate = await _context.Items
-                .Include(x => x.Tags)  
+                .Include(x => x.Tags)
                 .FirstAsync(x => x.Id == itemId);
 
             var itemDbProperties = typeof(ItemDb).GetProperties();

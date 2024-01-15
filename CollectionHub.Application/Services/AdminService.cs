@@ -14,7 +14,7 @@ namespace CollectionHub.Services
 
         public async Task<List<UserDb>> GetSortUsersAsync()
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users.AsNoTracking().ToListAsync();
             return users.OrderByDescending(u => u.IsAdmin).ToList();
         }
 

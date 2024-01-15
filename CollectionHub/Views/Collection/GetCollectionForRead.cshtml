@@ -1,0 +1,60 @@
+﻿@model CollectionHub.Models.ViewModels.CollectionViewModel
+
+@{
+    ViewData["Title"] = "Collection";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="text-left text-uppercase mb-4">@Model.Name</h2>
+        <p>@Model.Description</p>
+    </div> 
+    <div class="col-md-6 d-flex align-items-center justify-content-center">
+        @if (Model.ImageUrl == null)
+        {
+            <img src="~/NoImage.png" class="card-img-left uploaded-image" alt="No image">
+        }
+        else
+        {
+            <img src="@Model.ImageUrl" class="card-img-left uploaded-image" alt="Collection Image">
+        }
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                @foreach (var header in Model.AllHeaders)
+                {
+                    <th scope="col">@header.Value</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items != null)
+            {
+                for (int i = 0; i < Model.Items.Count; i++)
+                {
+                    var rowData = Model.Items[i];
+
+                    <tr>
+                        <td>@(i + 1)</td>
+                        @for (int j = 1; j < rowData.Count; j++)
+                        {
+                            if (j == 1)
+                            {
+                                <td><a href="@Url.Action("ActionName", "ControllerName", new { id = rowData[0] })" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">@rowData[j]</a></td>
+                            }
+                            else
+                            {
+                                <td>@rowData[j]</td>
+                            }
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

@@ -35,17 +35,18 @@ namespace CollectionHub.Services
 
         public async Task EditCollection(string userName, CollectionViewModel collectionViewModel)
         {
-            var collectionDb = await _context.Collections
-                .Where(x => x.User.UserName == userName)
-                .FirstAsync(x => x.Id == collectionViewModel.Id);
-
             var categoryDb = await _context.Categories.FirstAsync(x => x.Name == collectionViewModel.Category);
 
-            collectionDb.Name = collectionViewModel.Name;
-            collectionDb.Description = collectionViewModel.Description;
-            collectionDb.CategoryId = categoryDb.Id;
-            collectionDb.ImageUrl = collectionViewModel.ImageUrl;
+            var collectionDb = new CollectionDb
+            {
+                Id = collectionViewModel.Id,
+                Name = collectionViewModel.Name,
+                Description = collectionViewModel.Description,
+                CategoryId = categoryDb.Id,
+                ImageUrl = collectionViewModel.ImageUrl
+            };
 
+            _context.Collections.Update(collectionDb);
             await _context.SaveChangesAsync();
         }
 
@@ -58,11 +59,12 @@ namespace CollectionHub.Services
             return await UpdateCollectionFieldName(type, collection, name);
         }
 
-        public async Task<List<string>> GetAllCategories() => await _context.Categories.Select(x => x.Name).ToListAsync();
+        public async Task<List<string>> GetAllCategories() => await _context.Categories.AsNoTracking().Select(x => x.Name).ToListAsync();
 
         public async Task<List<CollectionViewModel>> GetUserCollections(string userName)
         {
             var collections = await _context.Collections
+                .AsNoTracking()
                 .Where(x => x.User.UserName == userName)
                 .OrderByDescending(x => x.CreationDate)
                 .ToListAsync();
@@ -70,9 +72,37 @@ namespace CollectionHub.Services
             return collections.ToCollectionViewModelList();
         }
 
+        public async Task<List<CollectionViewModel>> GetLargestCollections()
+        {
+            var collections = await _context.Collections
+                .AsNoTracking()
+                .OrderByDescending(x => x.Items.Count)
+                .Take(5)
+                .ToListAsync();
+
+            return collections.ToCollectionViewModelList();
+        }
+
+        public async Task<CollectionViewModel> GetCollectionForRead(long id)
+        {
+            var collection = await _context.Collections
+                .AsNoTracking()
+                .Include(x => x.Category)
+                .FirstAsync(x => x.Id == id);
+
+            var categories = await GetAllCategories();
+
+            var nonNullFieldNames = collection.GetNonNullStringFields();
+
+            var items = await _itemService.GetCollectionItems(id, new Dictionary<string, string>(nonNullFieldNames));
+
+            return collection.ToCollectionViewModel(nonNullFieldNames, items, categories);
+        }
+
         public async Task<CollectionViewModel> GetUserCollection(string userName, long id)
         {
             var collection = await _context.Collections
+                .AsNoTracking()
                 .Include(x => x.Category)
                 .Where(x => x.User.UserName == userName)
                 .FirstAsync(x => x.Id == id);
