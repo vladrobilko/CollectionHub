@@ -4,6 +4,13 @@
     ViewData["Title"] = "Collection";
 }
 
+@if (ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
+{
+    <div class="alert alert-danger d-flex align-items-center justify-content-center" role="alert">
+        @Html.ValidationMessage("error")
+    </div>
+}
+
 <div class="row">
     <div class="col-md-6">
         <h2 class="text-left text-uppercase mb-4">@Model.Name</h2>
@@ -27,7 +34,6 @@
             </div>
 
             <button type="submit" class="w-100 btn btn-lg btn-primary">Add</button>
-            <span class="text-danger">@Html.ValidationMessage("error")</span>
         </form>
     </div>
 

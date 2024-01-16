@@ -44,9 +44,14 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<ActionResult> EditItem(int collectionId, int selectedItemId)
         {
-            var item = await _itemService.GetItem(selectedItemId, collectionId, HttpContext.User.Identity.Name);
+            if (ModelState.IsValid)
+            {
+                return View(await _itemService.GetItem(selectedItemId, collectionId, HttpContext.User.Identity.Name));
+            }
 
-            return View(item);
+            TempData["ErrorMessage"] = "Please select an item to edit";
+
+            return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
         }
 
         [Authorize]
@@ -62,7 +67,14 @@ namespace CollectionHub.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteItem(int collectionId, int selectedItemId)
         {
-            await _itemService.DeleteItem(selectedItemId);
+            if (ModelState.IsValid)
+            {
+                await _itemService.DeleteItem(selectedItemId);
+
+                return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
+            }
+
+            TempData["ErrorMessage"] = "Please select an item to delete";
 
             return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
         }
