@@ -45,11 +45,14 @@
                         {
                             if (j == 1)
                             {
-                                <td><a href="@Url.Action("ActionName", "ControllerName", new { id = rowData[0] })" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">@rowData[j]</a></td>
+                                <td>
+                                    <a href="@Url.Action("GetItem", "Item", new { itemId = rowData[0], collectionId = Model.Id })"
+                                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">@rowData[j]</a>
+                                </td>
                             }
                             else
                             {
-                                <td>@rowData[j]</td>
+                                <td>@(rowData[j].Length > 50 ? rowData[j].Substring(0, 20) + "..." : rowData[j])</td>
                             }
                         }
                     </tr>
