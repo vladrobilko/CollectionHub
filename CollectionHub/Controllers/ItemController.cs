@@ -17,6 +17,25 @@ namespace CollectionHub.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetItem(long itemId, long collectionId)
+        {
+            return View(await _itemService.GetItem(itemId, collectionId));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PressLike(long itemId, long collectionId)
+        {
+            if (!HttpContext.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login","Account");
+            }
+
+            await _itemService.ProcessLikeItem(HttpContext.User.Identity.Name, itemId);
+
+            return RedirectToAction("GetItem", new { itemId = itemId, collectionId = collectionId });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> RecentlyAdded()
         {
             return View(await _itemService.GetRecentlyAddedItemsForRead());
@@ -46,7 +65,7 @@ namespace CollectionHub.Controllers
         {
             if (ModelState.IsValid)
             {
-                return View(await _itemService.GetItem(selectedItemId, collectionId, HttpContext.User.Identity.Name));
+                return View(await _itemService.GetItem(selectedItemId, collectionId));
             }
 
             TempData["ErrorMessage"] = "Please select an item to edit";

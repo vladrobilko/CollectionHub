@@ -12,6 +12,8 @@
 
         public string? AuthorName { get; set; }
 
+        public long? Likes { get; set; }
+
         public Dictionary<string, Dictionary<string,string>>? AllHeadersWithValues { get; set; }
     }
 }

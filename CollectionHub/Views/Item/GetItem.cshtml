@@ -1,0 +1,65 @@
+﻿@using CollectionHub.Domain.Converters
+@using CollectionHub.Models.Enums
+@using Microsoft.AspNetCore.Html
+@model CollectionHub.Models.ViewModels.ItemViewModel
+
+@{
+    ViewData["Title"] = "Item";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <h2 class="text-uppercase">@Model.AllHeadersWithValues["Name"].Values.FirstOrDefault()</h2>
+        <p>@Model.AllHeadersWithValues["Tags"].Values.FirstOrDefault()</p>
+
+        <div class="accordion">
+            @RenderAccordionSection("Strings", Model.AllHeadersWithValues.Where(x => x.Key != "Name" && x.Key != "Tags" && x.Key.ToDataType() == DataType.String), "panelsStayOpen-collapseOne")
+            @RenderAccordionSection("Integers", Model.AllHeadersWithValues.Where(x => x.Key.ToDataType() == DataType.Integer), "panelsStayOpen-collapseTwo")
+            @RenderAccordionSection("Texts", Model.AllHeadersWithValues.Where(x => x.Key.ToDataType() == DataType.Text), "panelsStayOpen-collapseThree")
+            @RenderAccordionSection("Bools", Model.AllHeadersWithValues.Where(x => x.Key.ToDataType() == DataType.Bool), "panelsStayOpen-collapseFour")
+            @RenderAccordionSection("Dates", Model.AllHeadersWithValues.Where(x => x.Key.ToDataType() == DataType.Date), "panelsStayOpen-collapseFive")
+        </div>
+
+        <div class="p-4 d-flex align-items-center">
+            <i class="fa-regular fa-comment" style="color: #0077cc;"></i>
+            <span class="ms-1">0</span>
+
+            <a href="@Url.Action("PressLike", "Item", new { itemId = Model.Id, collectionId = Model.CollectionId })" class="like-button ms-3">
+                <i class="fa-regular fa-heart"></i>
+            </a>
+            <span class="ms-1">@Model.Likes</span>
+        </div>
+    </div>
+</div>
+
+
+
+@functions {
+    IHtmlContent RenderAccordionSection(string title, IEnumerable<KeyValuePair<string, Dictionary<string, string>>> items, string collapseId)
+    {
+        var writer = new System.IO.StringWriter();
+
+        if (items.Count() != 0)
+        {
+            <text>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="@($"#{collapseId}")" aria-expanded="false" aria-controls="@collapseId">
+                            @title
+                        </button>
+                    </h2>
+                    <div id="@collapseId" class="accordion-collapse collapse" aria-labelledby="@($"#{collapseId}")">
+                        <div class="accordion-body">
+                            @foreach (var item in items)
+                            {
+                                <p><strong>@item.Value.Keys.FirstOrDefault():</strong> @item.Value.FirstOrDefault().Value</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </text>
+        }
+
+        return new HtmlString(writer.ToString());
+    }
+}

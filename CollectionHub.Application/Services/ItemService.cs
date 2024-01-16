@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using CollectionHub.Domain.Converters;
 using System.Reflection;
 using CollectionHub.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace CollectionHub.Services
 {
@@ -12,9 +13,38 @@ namespace CollectionHub.Services
     {
         private readonly ApplicationDbContext _context;
 
-        public ItemService(ApplicationDbContext context)
+        private readonly UserManager<UserDb> _userManager;
+
+        public ItemService(ApplicationDbContext context, UserManager<UserDb> userManager)
         {
             _context = context;
+            _userManager = userManager;
+        }
+
+        public async Task ProcessLikeItem(string userName, long itemId)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+
+            var existingLike = await _context.Likes
+                .Where(like => like.UserId == user.Id && like.ItemId == itemId)
+                .FirstOrDefaultAsync();
+
+            if (existingLike == null)
+            {
+                var newLike = new LikeDb
+                {
+                    UserId = user.Id, 
+                    ItemId = itemId
+                };
+
+                _context.Likes.Add(newLike);
+            }
+            else
+            {
+                _context.Likes.Remove(existingLike);
+            }
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead()
@@ -69,13 +99,14 @@ namespace CollectionHub.Services
             return result;
         }
 
-        public async Task<ItemViewModel> GetItem(long itemId, long collectionId, string userName)
+        public async Task<ItemViewModel> GetItem(long itemId, long collectionId)
         {
             var collection = await _context.Collections
                 .AsNoTracking()
                 .Include(x => x.Items)
                 .ThenInclude(x => x.Tags)
-                .Where(x => x.User.UserName == userName)
+                .Include(x => x.Items)
+                .ThenInclude(x => x.Likes)
                 .FirstAsync(x => x.Id == collectionId);
 
             var nonNullFieldNames = collection.GetNonNullStringFields();
@@ -86,6 +117,19 @@ namespace CollectionHub.Services
 
             var item = collection.Items.First(x => x.Id == itemId);
 
+            var headersWithValues = SetItemToDictionary(itemProperties, item);
+
+            return new ItemViewModel()
+            {
+                Id = itemId,
+                CollectionId = collectionId,
+                AllHeadersWithValues = headersWithValues,
+                Likes = item.Likes.Count
+            };
+        }
+
+        private Dictionary<string, Dictionary<string, string>> SetItemToDictionary(Dictionary<string,string> itemProperties, ItemDb item)
+        {
             var result = new Dictionary<string, Dictionary<string, string>>
             {
                 {
@@ -116,12 +160,7 @@ namespace CollectionHub.Services
                 }
             }
 
-            return new ItemViewModel()
-            {
-                Id = itemId,
-                CollectionId = collectionId,
-                AllHeadersWithValues = result
-            };
+            return result;
         }
 
         public async Task<long> EditItem(string userName, IFormCollection formCollection)

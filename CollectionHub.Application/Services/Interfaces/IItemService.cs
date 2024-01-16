@@ -11,10 +11,12 @@ namespace CollectionHub.Services.Interfaces
 
         Task DeleteItem(long id);
 
-        Task<ItemViewModel> GetItem(long itemId, long collectionId, string userName);
+        Task<ItemViewModel> GetItem(long itemId, long collectionId);
 
         Task<long> EditItem(string userName, IFormCollection formCollection);
 
         Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead();
+
+        Task ProcessLikeItem(string userName, long itemId);
     }
 }
