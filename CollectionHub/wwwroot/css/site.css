@@ -58,7 +58,7 @@ body {
 
 .uploaded-image {
     width: 250px;
-    height:250px;
+    height: 250px;
     object-fit: cover;
     border-radius: 20px;
 }
@@ -76,4 +76,8 @@ body {
 .like-button {
     text-decoration: none;
     color: #0077cc;
+}
+
+.noHover {
+    pointer-events: none;
 }

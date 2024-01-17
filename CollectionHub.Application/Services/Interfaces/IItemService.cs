@@ -18,5 +18,7 @@ namespace CollectionHub.Services.Interfaces
         Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead();
 
         Task ProcessLikeItem(string userName, long itemId);
+
+        Task AddComment(string userName, long itemId, string text);
     }
 }

@@ -22,17 +22,30 @@ namespace CollectionHub.Controllers
             return View(await _itemService.GetItem(itemId, collectionId));
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddComment(string comment, long itemId, long collectionId)
+        {
+            if (!HttpContext.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            await _itemService.AddComment(HttpContext.User.Identity.Name, itemId, comment);
+
+            return RedirectToAction("GetItem", new { itemId, collectionId });
+        }
+
         [HttpGet]
         public async Task<IActionResult> PressLike(long itemId, long collectionId)
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login","Account");
+                return RedirectToAction("Login", "Account");
             }
 
             await _itemService.ProcessLikeItem(HttpContext.User.Identity.Name, itemId);
 
-            return RedirectToAction("GetItem", new { itemId = itemId, collectionId = collectionId });
+            return RedirectToAction("GetItem", new { itemId, collectionId });
         }
 
         [HttpGet]

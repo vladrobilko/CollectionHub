@@ -24,26 +24,26 @@
                     <label asp-for="@key">@key:</label>
                     @if (item.Key.ToDataType() == DataType.Text)
                     {
-                        <textarea name="@item.Key" rows="4" cols="50" class="form-control" placeholder="Enter @key.ToString()">@(value ?? "")</textarea>
+                        <textarea name="@item.Key" rows="4" cols="50" class="form-control" placeholder="Enter @key.ToString()" required>@(value ?? "")</textarea>
                     }
                     else if (item.Key.ToDataType() == DataType.Bool)
                     {
                         <div class="form-check">
                             <input type="hidden" name="@item.Key" value="">
-                            <input name="@item.Key" type="checkbox" class="form-check-input" @(value == "true" ? "checked" : "")>
+                            <input name="@item.Key" type="checkbox" class="form-check-input" @(value == "true" ? "checked" : "") required>
                         </div>
                     }
                     else if (item.Key.ToDataType() == DataType.Integer)
                     {
-                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" placeholder="Enter @key" value="@value">
+                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" placeholder="Enter @key" value="@value" required>
                     }
                     else if (item.Key.ToDataType() == DataType.Date)
                     {
-                        <input name="@item.Key" type="date" class="form-control" value="@((value != null && DateTime.TryParse(value, out var dateValue)) ? dateValue.ToString("yyyy-MM-dd") : "")" />
+                        <input name="@item.Key" type="date" class="form-control" value="@((value != null && DateTime.TryParse(value, out var dateValue)) ? dateValue.ToString("yyyy-MM-dd") : "")" required />
                     }
                     else
                     {
-                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" placeholder="Enter @key" value="@value">
+                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" placeholder="Enter @key" value="@value" required>
                     }
                 </div>
             }

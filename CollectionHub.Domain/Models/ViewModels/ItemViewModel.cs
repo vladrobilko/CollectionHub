@@ -1,4 +1,6 @@
-﻿namespace CollectionHub.Models.ViewModels
+﻿using CollectionHub.Domain.Models.ViewModels;
+
+namespace CollectionHub.Models.ViewModels
 {
     public class ItemViewModel
     {
@@ -14,6 +16,8 @@
 
         public long? Likes { get; set; }
 
-        public Dictionary<string, Dictionary<string,string>>? AllHeadersWithValues { get; set; }
+        public Dictionary<string, Dictionary<string, string>>? AllHeadersWithValues { get; set; }
+
+        public List<CommentViewModel> Comments { get; set; }
     }
 }

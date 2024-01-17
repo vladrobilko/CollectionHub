@@ -6,6 +6,7 @@ using CollectionHub.Domain.Converters;
 using System.Reflection;
 using CollectionHub.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using CollectionHub.Domain.Models.ViewModels;
 
 namespace CollectionHub.Services
 {
@@ -43,6 +44,23 @@ namespace CollectionHub.Services
             {
                 _context.Likes.Remove(existingLike);
             }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddComment(string userName, long itemId, string text)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+
+            var comment = new CommentDb
+            {
+                UserId = user.Id,
+                ItemId = itemId,
+                Text = text,
+                CreationDate = DateTimeOffset.Now
+            };
+
+            _context.Add(comment);
 
             await _context.SaveChangesAsync();
         }
@@ -103,10 +121,14 @@ namespace CollectionHub.Services
         {
             var collection = await _context.Collections
                 .AsNoTracking()
+                .Where(x => x.Id == collectionId)
                 .Include(x => x.Items)
-                .ThenInclude(x => x.Tags)
+                    .ThenInclude(x => x.Tags)
                 .Include(x => x.Items)
-                .ThenInclude(x => x.Likes)
+                    .ThenInclude(x => x.Likes)
+                .Include(x => x.Items)
+                    .ThenInclude(x => x.Comments)
+                    .ThenInclude(x => x.User)
                 .FirstAsync(x => x.Id == collectionId);
 
             var nonNullFieldNames = collection.GetNonNullStringFields();
@@ -124,7 +146,8 @@ namespace CollectionHub.Services
                 Id = itemId,
                 CollectionId = collectionId,
                 AllHeadersWithValues = headersWithValues,
-                Likes = item.Likes.Count
+                Likes = item.Likes.Count,
+                Comments = item.ToCommentViewModelList()
             };
         }
 

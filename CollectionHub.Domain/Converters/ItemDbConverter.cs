@@ -1,4 +1,5 @@
 ﻿using CollectionHub.DataManagement;
+using CollectionHub.Domain.Models.ViewModels;
 using CollectionHub.Models.ViewModels;
 
 namespace CollectionHub.Domain.Converters
@@ -22,6 +23,23 @@ namespace CollectionHub.Domain.Converters
             }
 
             return itemsViewList;
+        }
+
+        public static List<CommentViewModel> ToCommentViewModelList(this ItemDb item)
+        {
+            var comments = new List<CommentViewModel>();
+
+            foreach (var comment in item.Comments)
+            {
+                comments.Add(new CommentViewModel
+                {
+                    UserName = comment.User.ViewName,
+                    Text = comment.Text,
+                    Date = comment.CreationDate
+                });
+            }
+
+            return comments.OrderBy(x => x.Date).ToList();
         }
     }
 }
