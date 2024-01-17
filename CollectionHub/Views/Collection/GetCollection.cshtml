@@ -52,7 +52,7 @@
             <button type="submit" class="btn btn-danger rounded-pill me-2">Delete</button>
         </form>
 
-        <a class="btn btn-success rounded-pill" href="@Url.Action("Export", "Collection", new { collectionId = Model.Id})">Export</a>
+        <a class="btn btn-success rounded-pill" href="@Url.Action("ExportCSV", "Collection", new { collectionId = Model.Id})">Export CSV</a>
     </div>
 </div>
 

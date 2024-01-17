@@ -73,6 +73,14 @@ namespace CollectionHub.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> ExportCSV(long collectionId)
+        {
+            var collection = await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, collectionId);
+
+            return File(collection.ToCsvBytes(), "text/csv", $"{collection.Name}.csv");
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCollectionItemField(long collectionId, string type, string name)
         {

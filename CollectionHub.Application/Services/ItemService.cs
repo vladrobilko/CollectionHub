@@ -318,8 +318,12 @@ namespace CollectionHub.Services
         {
             var item = await _context.Items
                 .Include(x => x.Tags)
+                .Include(x => x.Likes)
+                .Include(x => x.Comments)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
+            _context.Likes.RemoveRange(item.Likes);
+            _context.Comments.RemoveRange(item.Comments);
             _context.Tags.RemoveRange(item.Tags);
             _context.Items.Remove(item);
 
