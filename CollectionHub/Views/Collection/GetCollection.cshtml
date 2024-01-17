@@ -17,42 +17,42 @@
         <p>@Model.Description</p>
     </div>
     <div class="col-md-4 offset-md-1">
-        <h2 class="text-uppercase mb-4">Add table column here</h2>
+        <h2 class="text-uppercase mb-4">@Localizer["addColumn"]</h2>
         <form method="post" asp-action="AddCollectionItemField">
             <input type="hidden" name="collectionId" value="@Model.Id" />
 
             <div class="form-group mb-3">
                 <label>Type</label>
                 <select class="form-select" name="type" asp-items="@Model.ItemsDataTypes">
-                    <option value="" selected>Choose type</option>
+                    <option value="" selected>@Localizer["chooseType"]</option>
                 </select>
             </div>
 
             <div class="form-group mb-3">
-                <label>Name</label>
+                <label>@Localizer["name"]</label>
                 <input type="text" name="name" class="form-control" />
             </div>
 
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Add</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">@Localizer["add"]</button>
         </form>
     </div>
 
     <div class="col-md-4 d-flex">
-        <a class="btn btn-primary rounded-pill me-2" href="@Url.Action("CreateItem", "Item", new { collectionId = Model.Id})">Create</a>
+        <a class="btn btn-primary rounded-pill me-2" href="@Url.Action("CreateItem", "Item", new { collectionId = Model.Id})">@Localizer["create"]</a>
 
         <form method="get" asp-controller="Item" asp-action="EditItem">
             <input type="hidden" name="collectionId" value="@Model.Id" />
             <input type="hidden" name="selectedItemId" id="editSelectedItemId" />
-            <button type="submit" class="btn btn-secondary rounded-pill me-2">Edit</button>
+            <button type="submit" class="btn btn-secondary rounded-pill me-2">@Localizer["edit"]</button>
         </form>
 
         <form method="post" asp-controller="Item" asp-action="DeleteItem">
             <input type="hidden" name="collectionId" value="@Model.Id" />
             <input type="hidden" name="selectedItemId" id="deleteSelectedItemId" />
-            <button type="submit" class="btn btn-danger rounded-pill me-2">Delete</button>
+            <button type="submit" class="btn btn-danger rounded-pill me-2">@Localizer["delete"]</button>
         </form>
 
-        <a class="btn btn-success rounded-pill" href="@Url.Action("ExportCSV", "Collection", new { collectionId = Model.Id})">Export CSV</a>
+        <a class="btn btn-success rounded-pill" href="@Url.Action("ExportCSV", "Collection", new { collectionId = Model.Id})">@Localizer["export"]</a>
     </div>
 </div>
 

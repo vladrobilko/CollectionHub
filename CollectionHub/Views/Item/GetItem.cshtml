@@ -29,7 +29,7 @@
             </a>
             <span class="ms-1">@Model.Likes</span>
         </div>
-        <h3>Comments:</h3>
+        <h3>@Localizer["comments"]</h3>
         @if (Model.Comments != null && Model.Comments.Any())
         {
             @foreach (var comment in Model.Comments)
@@ -39,7 +39,7 @@
                         <div class="d-flex flex-start align-items-center">
                             <div>
                                 <h6 class="fw-bold text-primary mb-1">@comment.UserName</h6>
-                                <p class="text-muted small mb-0">Posted on: @comment.Date.ToString("MMMM dd, yyyy h:mm tt")</p>
+                                <p class="text-muted small mb-0">@Localizer["posted"] @comment.Date.ToString("MMMM dd, yyyy h:mm tt")</p>
                             </div>
                         </div>
                         <p class="mt-3 mb-0 pb-2">@comment.Text</p>
@@ -49,7 +49,7 @@
         }
         else
         {
-            <p>Add the first comment to share it with users</p>
+            <p>@Localizer["addFirstComment"]</p>
         }
 
         <form method="post" asp-action="AddComment">
@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div class="float-end mt-2 pt-1">
-                <button type="submit" class="btn btn-primary btn-sm">Add comment</button>
+                <button type="submit" class="btn btn-primary btn-sm">@Localizer["addComment"]</button>
             </div>
         </form>
 
