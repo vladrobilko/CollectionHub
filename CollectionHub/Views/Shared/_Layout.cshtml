@@ -40,8 +40,8 @@
 
                     <ul class="navbar-nav justify-content-center">
                         <li class="nav-item dropdown me-3">
-                            <form class="d-flex">
-                                <input class="form-control rounded-pill" type="search" placeholder="@Localizer["search"]" aria-label="Search">
+                            <form class="d-flex" asp-controller="Item" asp-action="SearchItems" method="get">
+                                <input class="form-control rounded-pill" type="search" name="query" placeholder="@Localizer["search"]" aria-label="Search" required>
                                 <button class="btn btn-outline-primary border-0" type="submit">
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </button>

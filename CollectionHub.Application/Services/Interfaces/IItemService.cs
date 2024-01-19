@@ -20,5 +20,7 @@ namespace CollectionHub.Services.Interfaces
         Task ProcessLikeItem(string userName, long itemId);
 
         Task AddComment(string userName, long itemId, string text);
+
+        Task<List<ItemViewModel>> SearchItems(string query);
     }
 }

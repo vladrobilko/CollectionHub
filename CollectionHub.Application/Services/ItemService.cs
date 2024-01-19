@@ -6,7 +6,8 @@ using CollectionHub.Domain.Converters;
 using System.Reflection;
 using CollectionHub.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
-using CollectionHub.Domain.Models.ViewModels;
+using CollectionHub.Domain;
+using CollectionHub.Domain.Interfaces;
 
 namespace CollectionHub.Services
 {
@@ -16,10 +17,18 @@ namespace CollectionHub.Services
 
         private readonly UserManager<UserDb> _userManager;
 
-        public ItemService(ApplicationDbContext context, UserManager<UserDb> userManager)
+        private readonly IAlgoliaIntegration _algolia;
+
+        public ItemService(ApplicationDbContext context, UserManager<UserDb> userManager, IAlgoliaIntegration algolia)
         {
             _context = context;
             _userManager = userManager;
+            _algolia = algolia;
+        }
+
+        public async Task<List<ItemViewModel>> SearchItems(string query)
+        {
+            return await _algolia.SearchItems(query);
         }
 
         public async Task ProcessLikeItem(string userName, long itemId)
@@ -212,6 +221,7 @@ namespace CollectionHub.Services
             }
 
             await _context.SaveChangesAsync();
+            await _algolia.UpdateItem(itemToUpdate);
 
             return itemToUpdate.CollectionId;
         }
@@ -246,6 +256,7 @@ namespace CollectionHub.Services
 
             await _context.AddAsync(newItem);
             await _context.SaveChangesAsync();
+            await _algolia.CreateItem(newItem);
 
             return collectionId;
         }
@@ -328,6 +339,7 @@ namespace CollectionHub.Services
             _context.Items.Remove(item);
 
             await _context.SaveChangesAsync();
+            await _algolia.DeleteItem(id);
         }
     }
 }

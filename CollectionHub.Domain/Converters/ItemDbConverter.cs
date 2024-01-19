@@ -1,4 +1,5 @@
 ﻿using CollectionHub.DataManagement;
+using CollectionHub.Domain.Models;
 using CollectionHub.Domain.Models.ViewModels;
 using CollectionHub.Models.ViewModels;
 
@@ -40,6 +41,19 @@ namespace CollectionHub.Domain.Converters
             }
 
             return comments.OrderBy(x => x.Date).ToList();
+        }
+
+        public static ItemAlgoliaModel ToItemAlgoliaModel(this ItemDb item)
+        {
+            return new ItemAlgoliaModel
+            {
+                ObjectID = item.Id.ToString(),
+                CollectionId = item.CollectionId,
+                Name = item.Name,
+                CollectionName = item.Collection.Name,
+                Tags = string.Join(", ", item.Tags.Select(tag => tag.Name)),
+                Text = $"{item.String1Value ?? ""} {item.String2Value ?? ""} {item.String3Value ?? ""} {item.Text1Value ?? ""} {item.Text2Value ?? ""} {item.Text3Value ?? ""}"
+            };
         }
     }
 }

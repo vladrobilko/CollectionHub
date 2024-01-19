@@ -17,6 +17,12 @@ namespace CollectionHub.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> SearchItems(string query)
+        {
+            return View(await _itemService.SearchItems(query));
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetItem(long itemId, long collectionId)
         {
             return View(await _itemService.GetItem(itemId, collectionId));

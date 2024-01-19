@@ -1,0 +1,46 @@
+﻿@model List<CollectionHub.Models.ViewModels.ItemViewModel>
+
+@{
+    ViewData["Title"] = "Results";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="text-left text-uppercase mb-4">@Localizer["results"]</h2>
+
+        @if (Model != null && Model.Count != 0)
+        {
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">@Localizer["itemName"]</th>
+                            <th scope="col">@Localizer["collectionName"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            for (int i = 0; i < Model.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="@Url.Action("GetItem", "Item", new { itemId = Model[i].Id, collectionId = Model[i].CollectionId })"
+                                           class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                                            @Model[i].Name
+                                        </a>
+                                    </td>
+                                    <td>@Model[i].CollectionName</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <h4>@Localizer["noItems"]</h4>
+        }
+    </div>
+</div>

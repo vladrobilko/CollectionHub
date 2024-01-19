@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Razor;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Algolia.Search.Clients;
+using CollectionHub.Domain;
+using CollectionHub.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,10 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ICollectionService, CollectionService>(); 
 builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IAlgoliaIntegration, AlgoliaIntegration>(); 
+
+builder.Services.AddSingleton<ISearchClient>(new SearchClient(
+    builder.Configuration["AlgoliaApplicationId"], builder.Configuration["AlgoliaApiKey"]));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
