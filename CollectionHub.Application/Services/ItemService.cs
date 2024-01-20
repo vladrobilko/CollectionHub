@@ -3,7 +3,6 @@ using CollectionHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using CollectionHub.Domain.Converters;
-using System.Reflection;
 using CollectionHub.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using CollectionHub.Domain.Interfaces;
@@ -18,11 +17,32 @@ namespace CollectionHub.Services
 
         private readonly IAlgoliaIntegration _algolia;
 
-        public ItemService(ApplicationDbContext context, UserManager<UserDb> userManager, IAlgoliaIntegration algolia)
+        private readonly IItemMapper _itemMapper;
+
+        public ItemService(ApplicationDbContext context, UserManager<UserDb> userManager, IAlgoliaIntegration algolia, IItemMapper itemMapper)
         {
             _context = context;
             _userManager = userManager;
             _algolia = algolia;
+            _itemMapper = itemMapper;
+        }
+
+        public async Task<long> CreateItem(string userName, IFormCollection formCollection)
+        {
+            var collectionId = formCollection.ToId();
+
+            await CheckIsUserHasCollection(userName, collectionId);
+
+            var newItem = _itemMapper.MapFormFieldsToNewItem(formCollection);
+
+            newItem.CollectionId = collectionId;
+            newItem.CreationDate = DateTimeOffset.Now;
+
+            await _context.AddAsync(newItem);
+            await _context.SaveChangesAsync();
+            await _algolia.CreateItem(newItem);
+
+            return collectionId;
         }
 
         public async Task<List<List<string>>> GetCollectionItems(long collectionId, Dictionary<string, string> fieldNames)
@@ -33,36 +53,21 @@ namespace CollectionHub.Services
                 .Include(item => item.Tags)
                 .ToListAsync();
 
-            var itemProperties = fieldNames.ToItemPropertyNames();
+            var listItems = _itemMapper.MapItemValuesToLists(items, fieldNames);
 
-            var result = new List<List<string>>();
+            return listItems;
+        }
 
-            foreach (var item in items)
-            {
-                //
-                var itemValues = new List<string>
-                {
-                    item.Id.ToString(),
-                    item.Name,
-                    string.Join(", ", item.Tags.Select(tag => "#" + tag.Name))
-                };
+        public async Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead()
+        {
+            var items = await _context.Items
+             .AsNoTracking()
+             .Include(x => x.Collection)
+             .Include(x => x.Collection.User)
+             .OrderByDescending(x => x.CreationDate)
+             .ToListAsync();
 
-                foreach (var fieldName in itemProperties)
-                {
-                    var propertyInfo = typeof(ItemDb).GetProperty(fieldName);
-
-                    if (propertyInfo != null)
-                    {
-                        var value = GetPropertyValueAsString(propertyInfo, item);
-                        itemValues.Add(value);
-                    }
-                }
-                //
-
-                result.Add(itemValues);
-            }
-
-            return result;
+            return items.ToItemViewModelList();
         }
 
         public async Task<ItemViewModel> GetItem(long itemId, long collectionId)
@@ -79,190 +84,28 @@ namespace CollectionHub.Services
                     .ThenInclude(x => x.User)
                 .FirstAsync(x => x.Id == collectionId);
 
-            var nonNullFieldNames = collection.GetNonNullStringFields();
-            var itemProperties = nonNullFieldNames.ToDictionary(
-                    kvp => kvp.Key.ToItemDbProperty(),
-                    kvp => kvp.Value
-                );
-
             var item = collection.Items.First(x => x.Id == itemId);
 
-            var headersWithValues = SetItemToDictionary(itemProperties, item);
+            var allHeadersWihValues = _itemMapper.MapCollectionToItemProperties(collection, item);
 
-            return new ItemViewModel()
-            {
-                Id = itemId,
-                CollectionId = collectionId,
-                AllHeadersWithValues = headersWithValues,
-                Likes = item.Likes.Count,
-                Comments = item.ToCommentViewModelList()
-            };
-        }
-
-        private Dictionary<string, Dictionary<string, string>> SetItemToDictionary(Dictionary<string, string> itemProperties, ItemDb item)
-        {
-            var result = new Dictionary<string, Dictionary<string, string>>
-            {
-                {
-                    nameof(ItemDb.Name), new Dictionary<string, string>
-                    {
-                        { nameof(ItemDb.Name), item.Name }
-                    }
-                },
-                {
-                    nameof(ItemDb.Tags), new Dictionary<string, string>
-                    {
-                        { nameof(ItemDb.Tags), string.Join(", ", item.Tags.Select(tag => "#" + tag.Name)) }
-                    }
-                },
-            };
-
-            foreach (var fieldName in itemProperties.Keys)
-            {
-                var propertyInfo = typeof(ItemDb).GetProperty(fieldName);
-
-                if (propertyInfo != null)
-                {
-                    var value = GetPropertyValueAsString(propertyInfo, item);
-                    result.Add(fieldName, new Dictionary<string, string>
-                    {
-                        { itemProperties[fieldName], value }
-                    });
-                }
-            }
-
-            return result;
+            return item.ToItemViewModel(itemId, collectionId, allHeadersWihValues);
         }
 
         public async Task<long> EditItem(string userName, IFormCollection formCollection)
         {
             var itemId = formCollection.ToId();
-            var fieldsWithValues = formCollection.ToDictionary();
 
             var itemToUpdate = await _context.Items
                 .Include(x => x.Tags)
                 .FirstAsync(x => x.Id == itemId);
 
-            var itemDbProperties = typeof(ItemDb).GetProperties();
-
-            foreach (var item in fieldsWithValues)
-            {
-                var property = itemDbProperties.FirstOrDefault(p => p.Name == item.Key);
-
-                if (item.Key == nameof(ItemDb.Tags))
-                {
-                    UpdateTags(itemToUpdate, item.Value);
-                }
-                else
-                {
-                    SetProperty(item, property, itemToUpdate);
-                }
-            }
+            _itemMapper.UpdateItemFromFormFields(itemToUpdate, formCollection);
 
             await _context.SaveChangesAsync();
             await _algolia.UpdateItem(itemToUpdate);
 
             return itemToUpdate.CollectionId;
         }
-
-        public async Task<long> CreateItem(string userName, IFormCollection formCollection)
-        {
-            var collectionId = formCollection.ToId();
-
-            var fieldsWithValues = formCollection.ToDictionary();
-
-            await CheckIsUserHasCollection(userName, collectionId);
-
-            var itemDbProperties = typeof(ItemDb).GetProperties();
-            var newItem = new ItemDb();
-
-            foreach (var item in fieldsWithValues)
-            {
-                var property = itemDbProperties.FirstOrDefault(p => p.Name == item.Key.ToItemDbProperty());
-
-                if (item.Key == nameof(ItemDb.Tags))
-                {
-                    newItem.Tags = item.Value.ToTags();
-                }
-                else
-                {
-                    SetProperty(item, property, newItem);
-                }
-            }
-
-            newItem.CollectionId = collectionId;
-            newItem.CreationDate = DateTimeOffset.Now;
-
-            await _context.AddAsync(newItem);
-            await _context.SaveChangesAsync();
-            await _algolia.CreateItem(newItem);
-
-            return collectionId;
-        }
-
-        private void SetProperty(KeyValuePair<string, string> item, PropertyInfo property, ItemDb itemToSet)
-        {
-            if (property != null)
-            {
-                var value = item.Value.ToDynamicType(property.PropertyType);
-                var valueRes = ChangeType(value, property.PropertyType);
-                property.SetValue(itemToSet, valueRes);
-            }
-        }
-
-        private void UpdateTags(ItemDb itemToUpdate, string tagsValue)//domain
-        {
-            var newTags = tagsValue.ToTags();
-
-            var existingTags = itemToUpdate.Tags.ToList();
-
-            foreach (var newTag in newTags)
-            {
-                if (!existingTags.Any(existingTag => existingTag.Name == newTag.Name))
-                {
-                    itemToUpdate.Tags.Add(newTag);
-                }
-            }
-        }
-
-        private string GetPropertyValueAsString(PropertyInfo propertyInfo, ItemDb item)//domain
-        {
-            var value = propertyInfo.GetValue(item);
-
-            if (propertyInfo.PropertyType == typeof(DateTimeOffset?) && value is DateTimeOffset dateTimeOffset)
-            {
-                return dateTimeOffset.Date.ToString("yyyy-MM-dd");
-            }
-
-            return value?.ToString() ?? "-";
-        }
-
-        private object ChangeType(object value, Type conversion)//domain
-        {
-            var t = conversion;
-
-            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-            {
-                if (value == null)
-                {
-                    return null;
-                }
-
-                t = Nullable.GetUnderlyingType(t);
-            }
-
-            return Convert.ChangeType(value, t);
-        }
-
-
-
-
-
-
-
-
-
-        public async Task<List<ItemViewModel>> SearchItems(string query) => await _algolia.SearchItems(query);
 
         public async Task ProcessLikeItem(string userName, long itemId)
         {
@@ -274,13 +117,7 @@ namespace CollectionHub.Services
 
             if (existingLike == null)
             {
-                var newLike = new LikeDb
-                {
-                    UserId = user.Id,
-                    ItemId = itemId
-                };
-
-                _context.Likes.Add(newLike);
+                _context.Likes.Add(CreateLikeDbInstance(user, itemId));
             }
             else
             {
@@ -294,37 +131,12 @@ namespace CollectionHub.Services
         {
             var user = await _userManager.FindByNameAsync(userName);
 
-            var comment = new CommentDb
-            {
-                UserId = user.Id,
-                ItemId = itemId,
-                Text = text,
-                CreationDate = DateTimeOffset.Now
-            };
-
-            _context.Add(comment);
+            _context.Add(CreateCommentDbInstance(user, itemId, text));
 
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead()
-        {
-            var items = await _context.Items
-             .AsNoTracking()
-             .Include(x => x.Collection)
-             .Include(x => x.Collection.User)
-             .OrderByDescending(x => x.CreationDate)
-             .ToListAsync();
-
-            return items.ToItemViewModelList();
-        }
-
-        private async Task CheckIsUserHasCollection(string userName, long collectionId)
-        {
-            var collection = await _context.Collections
-                .Where(x => x.User.UserName == userName)
-                .FirstOrDefaultAsync(x => x.Id == collectionId) ?? throw new AccessViolationException();
-        }
+        public async Task<List<ItemViewModel>> SearchItems(string query) => await _algolia.SearchItems(query);
 
         public async Task DeleteItem(long id)
         {
@@ -342,5 +154,28 @@ namespace CollectionHub.Services
             await _context.SaveChangesAsync();
             await _algolia.DeleteItem(id);
         }
+
+        private async Task CheckIsUserHasCollection(string userName, long collectionId)
+        {
+            var collection = await _context.Collections
+                .Where(x => x.User.UserName == userName)
+                .FirstOrDefaultAsync(x => x.Id == collectionId) ?? throw new AccessViolationException();
+        }
+
+        private LikeDb CreateLikeDbInstance(UserDb user, long itemId) =>
+            new LikeDb
+            {
+                UserId = user.Id,
+                ItemId = itemId
+            };
+
+        private CommentDb CreateCommentDbInstance(UserDb user, long itemId, string text) =>
+            new CommentDb
+            {
+                UserId = user.Id,
+                ItemId = itemId,
+                Text = text,
+                CreationDate = DateTimeOffset.Now
+            };
     }
 }

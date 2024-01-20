@@ -50,10 +50,20 @@ namespace CollectionHub.Domain.Converters
                 ObjectID = item.Id.ToString(),
                 CollectionId = item.CollectionId,
                 Name = item.Name,
-                CollectionName = item.Collection.Name,
+                CollectionName = item.Collection.Name ?? "",
                 Tags = string.Join(", ", item.Tags.Select(tag => tag.Name)),
                 Text = $"{item.String1Value ?? ""} {item.String2Value ?? ""} {item.String3Value ?? ""} {item.Text1Value ?? ""} {item.Text2Value ?? ""} {item.Text3Value ?? ""}"
             };
         }
+
+        public static ItemViewModel ToItemViewModel(this ItemDb item, long itemId, long collectionId, Dictionary<string, Dictionary<string, string>>  allHeadersWithValues) =>
+            new ItemViewModel()
+            {
+                Id = itemId,
+                CollectionId = collectionId,
+                AllHeadersWithValues = allHeadersWithValues,
+                Likes = item.Likes.Count,
+                Comments = item.ToCommentViewModelList()
+            };
     }
 }

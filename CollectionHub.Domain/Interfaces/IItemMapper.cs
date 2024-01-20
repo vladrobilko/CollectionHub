@@ -1,0 +1,16 @@
+﻿using CollectionHub.DataManagement;
+using Microsoft.AspNetCore.Http;
+
+namespace CollectionHub.Domain.Interfaces
+{
+    public interface IItemMapper
+    {
+        Dictionary<string, Dictionary<string, string>> MapCollectionToItemProperties(CollectionDb collection, ItemDb item);
+
+        ItemDb MapFormFieldsToNewItem(IFormCollection formCollection);
+
+        void UpdateItemFromFormFields(ItemDb itemToUpdate, IFormCollection formCollection);
+
+        List<List<string>> MapItemValuesToLists(List<ItemDb> items, Dictionary<string, string> fieldNames);
+    }
+}

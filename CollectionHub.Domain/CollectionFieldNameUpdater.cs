@@ -7,7 +7,7 @@ namespace CollectionHub.Domain
 {
     public class CollectionFieldNameUpdater : ICollectionFieldNameUpdater
     {
-        public bool UpdateCollectionFieldName(DataType type, CollectionDb collection, string name)
+        public bool TryUpdateCollectionFieldName(DataType type, CollectionDb collection, string name)
         {
             var propertyNames = type.ToCollectionProperty();
 

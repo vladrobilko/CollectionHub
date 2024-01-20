@@ -25,6 +25,7 @@ builder.Services.AddScoped<ICollectionService, CollectionService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IAlgoliaIntegration, AlgoliaIntegration>();
 builder.Services.AddScoped<ICollectionFieldNameUpdater, CollectionFieldNameUpdater>();
+builder.Services.AddScoped<IItemMapper, ItemMapper>();
 
 builder.Services.AddSingleton<ISearchClient>(new SearchClient(
     builder.Configuration["AlgoliaApplicationId"], builder.Configuration["AlgoliaApiKey"]));

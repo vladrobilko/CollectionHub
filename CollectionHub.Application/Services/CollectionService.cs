@@ -42,7 +42,7 @@ namespace CollectionHub.Services
                 .Where(x => x.User.UserName == userName)
                 .FirstAsync(x => x.Id == id);
 
-            var isUpdated = _fieldNameUpdater.UpdateCollectionFieldName(type, collection, name);
+            var isUpdated = _fieldNameUpdater.TryUpdateCollectionFieldName(type, collection, name);
 
             if (isUpdated)
             {
