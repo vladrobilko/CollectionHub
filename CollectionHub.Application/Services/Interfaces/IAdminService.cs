@@ -5,9 +5,9 @@ namespace CollectionHub.Services.Interfaces
 {
     public interface IAdminService
     {
-        Task<List<UserDb>> GetSortUsersAsync();
+        Task<List<UserDb>> GetSortUsers();
 
-        Task HandleAdminActionAsync(UserManageActions action, List<string> emails);
+        Task HandleAdminAction(UserManageActions action, List<string> emails);
 
         Task<bool> IsUserBlockedOrNotAdmin(string? email);
     }

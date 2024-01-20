@@ -8,19 +8,19 @@ namespace CollectionHub.Services.Interfaces
         Task<long> CreateItem(string userName, IFormCollection formCollection);
 
         Task<List<List<string>>> GetCollectionItems(long collectionId, Dictionary<string, string> fieldNames);
-
-        Task DeleteItem(long id);
+        
+        Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead();
 
         Task<ItemViewModel> GetItem(long itemId, long collectionId);
 
         Task<long> EditItem(string userName, IFormCollection formCollection);
-
-        Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead();
 
         Task ProcessLikeItem(string userName, long itemId);
 
         Task AddComment(string userName, long itemId, string text);
 
         Task<List<ItemViewModel>> SearchItems(string query);
+
+        Task DeleteItem(long id);
     }
 }

@@ -6,7 +6,6 @@ using CollectionHub.Domain.Converters;
 using System.Reflection;
 using CollectionHub.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
-using CollectionHub.Domain;
 using CollectionHub.Domain.Interfaces;
 
 namespace CollectionHub.Services
@@ -24,66 +23,6 @@ namespace CollectionHub.Services
             _context = context;
             _userManager = userManager;
             _algolia = algolia;
-        }
-
-        public async Task<List<ItemViewModel>> SearchItems(string query)
-        {
-            return await _algolia.SearchItems(query);
-        }
-
-        public async Task ProcessLikeItem(string userName, long itemId)
-        {
-            var user = await _userManager.FindByNameAsync(userName);
-
-            var existingLike = await _context.Likes
-                .Where(like => like.UserId == user.Id && like.ItemId == itemId)
-                .FirstOrDefaultAsync();
-
-            if (existingLike == null)
-            {
-                var newLike = new LikeDb
-                {
-                    UserId = user.Id, 
-                    ItemId = itemId
-                };
-
-                _context.Likes.Add(newLike);
-            }
-            else
-            {
-                _context.Likes.Remove(existingLike);
-            }
-
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task AddComment(string userName, long itemId, string text)
-        {
-            var user = await _userManager.FindByNameAsync(userName);
-
-            var comment = new CommentDb
-            {
-                UserId = user.Id,
-                ItemId = itemId,
-                Text = text,
-                CreationDate = DateTimeOffset.Now
-            };
-
-            _context.Add(comment);
-
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead()
-        {
-            var items = await _context.Items
-             .AsNoTracking()
-             .Include(x => x.Collection)
-             .Include(x => x.Collection.User)
-             .OrderByDescending(x => x.CreationDate)
-             .ToListAsync();
-
-            return items.ToItemViewModelList();
         }
 
         public async Task<List<List<string>>> GetCollectionItems(long collectionId, Dictionary<string, string> fieldNames)
@@ -160,7 +99,7 @@ namespace CollectionHub.Services
             };
         }
 
-        private Dictionary<string, Dictionary<string, string>> SetItemToDictionary(Dictionary<string,string> itemProperties, ItemDb item)
+        private Dictionary<string, Dictionary<string, string>> SetItemToDictionary(Dictionary<string, string> itemProperties, ItemDb item)
         {
             var result = new Dictionary<string, Dictionary<string, string>>
             {
@@ -261,8 +200,6 @@ namespace CollectionHub.Services
             return collectionId;
         }
 
-
-
         private void SetProperty(KeyValuePair<string, string> item, PropertyInfo property, ItemDb itemToSet)
         {
             if (property != null)
@@ -273,7 +210,7 @@ namespace CollectionHub.Services
             }
         }
 
-        private void UpdateTags(ItemDb itemToUpdate, string tagsValue)
+        private void UpdateTags(ItemDb itemToUpdate, string tagsValue)//domain
         {
             var newTags = tagsValue.ToTags();
 
@@ -288,7 +225,7 @@ namespace CollectionHub.Services
             }
         }
 
-        private string GetPropertyValueAsString(PropertyInfo propertyInfo, ItemDb item)
+        private string GetPropertyValueAsString(PropertyInfo propertyInfo, ItemDb item)//domain
         {
             var value = propertyInfo.GetValue(item);
 
@@ -300,7 +237,7 @@ namespace CollectionHub.Services
             return value?.ToString() ?? "-";
         }
 
-        private object ChangeType(object value, Type conversion)
+        private object ChangeType(object value, Type conversion)//domain
         {
             var t = conversion;
 
@@ -317,6 +254,70 @@ namespace CollectionHub.Services
             return Convert.ChangeType(value, t);
         }
 
+
+
+
+
+
+
+
+
+        public async Task<List<ItemViewModel>> SearchItems(string query) => await _algolia.SearchItems(query);
+
+        public async Task ProcessLikeItem(string userName, long itemId)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+
+            var existingLike = await _context.Likes
+                .Where(like => like.UserId == user.Id && like.ItemId == itemId)
+                .FirstOrDefaultAsync();
+
+            if (existingLike == null)
+            {
+                var newLike = new LikeDb
+                {
+                    UserId = user.Id,
+                    ItemId = itemId
+                };
+
+                _context.Likes.Add(newLike);
+            }
+            else
+            {
+                _context.Likes.Remove(existingLike);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddComment(string userName, long itemId, string text)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+
+            var comment = new CommentDb
+            {
+                UserId = user.Id,
+                ItemId = itemId,
+                Text = text,
+                CreationDate = DateTimeOffset.Now
+            };
+
+            _context.Add(comment);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead()
+        {
+            var items = await _context.Items
+             .AsNoTracking()
+             .Include(x => x.Collection)
+             .Include(x => x.Collection.User)
+             .OrderByDescending(x => x.CreationDate)
+             .ToListAsync();
+
+            return items.ToItemViewModelList();
+        }
 
         private async Task CheckIsUserHasCollection(string userName, long collectionId)
         {

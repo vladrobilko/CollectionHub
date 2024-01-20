@@ -1,5 +1,6 @@
 ﻿using CollectionHub.DataManagement;
 using CollectionHub.Domain.Converters;
+using CollectionHub.Domain.Interfaces;
 using CollectionHub.Models.Enums;
 using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;
@@ -16,50 +17,40 @@ namespace CollectionHub.Services
 
         private readonly IItemService _itemService;
 
-        public CollectionService(ApplicationDbContext context, UserManager<UserDb> userManager, IItemService itemService)
+        private readonly ICollectionFieldNameUpdater _fieldNameUpdater;
+
+        public CollectionService(ApplicationDbContext context, UserManager<UserDb> userManager, IItemService itemService, ICollectionFieldNameUpdater fieldNameUpdater)
         {
             _context = context;
             _userManager = userManager;
             _itemService = itemService;
+            _fieldNameUpdater = fieldNameUpdater;
         }
 
-        public async Task<CollectionViewModel> GetEmptyCollectionViewModel()
+        public async Task CreateCollection(CollectionViewModel collection, string userName)
         {
-            var categories = await GetAllCategories();
+            var user = await _userManager.FindByNameAsync(userName);
+            var category = await _context.Categories.FirstAsync(x => x.Name == collection.Category);
 
-            return new CollectionViewModel
-            {
-                Categories = categories.ToSelectListItem()
-            };
-        }
-
-        public async Task EditCollection(string userName, CollectionViewModel collectionViewModel)
-        {
-            var categoryDb = await _context.Categories.FirstAsync(x => x.Name == collectionViewModel.Category);
-
-            var collectionDb = new CollectionDb
-            {
-                Id = collectionViewModel.Id,
-                Name = collectionViewModel.Name,
-                Description = collectionViewModel.Description,
-                CategoryId = categoryDb.Id,
-                ImageUrl = collectionViewModel.ImageUrl
-            };
-
-            _context.Collections.Update(collectionDb);
+            await _context.AddAsync(CreateCollectionDbInstance(user, collection, category));
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> AddCollectionItemField(string userName, long id, DataType type, string name)
+        public async Task<bool> CreateCollectionItemField(string userName, long id, DataType type, string name)
         {
             var collection = await _context.Collections
                 .Where(x => x.User.UserName == userName)
                 .FirstAsync(x => x.Id == id);
 
-            return await UpdateCollectionFieldName(type, collection, name);
-        }
+            var isUpdated = _fieldNameUpdater.UpdateCollectionFieldName(type, collection, name);
 
-        public async Task<List<string>> GetAllCategories() => await _context.Categories.AsNoTracking().Select(x => x.Name).ToListAsync();
+            if (isUpdated)
+            {
+                await _context.SaveChangesAsync();
+            }
+
+            return isUpdated;
+        }
 
         public async Task<List<CollectionViewModel>> GetUserCollections(string userName)
         {
@@ -70,6 +61,31 @@ namespace CollectionHub.Services
                 .ToListAsync();
 
             return collections.ToCollectionViewModelList();
+        }
+
+        public async Task<CollectionViewModel> GetUserCollection(string userName, long id)
+        {
+            var collection = await _context.Collections
+                .AsNoTracking()
+                .Include(x => x.Category)
+                .Where(x => x.User.UserName == userName)
+                .FirstAsync(x => x.Id == id);
+
+            var categories = await GetAllCategories();
+
+            var items = await _itemService.GetCollectionItems(id, collection.GetNonNullStringFields());
+
+            return collection.ToCollectionViewModel(items, categories);
+        }
+
+        public async Task<CollectionViewModel> GetEmptyCollectionViewModel()
+        {
+            var categories = await GetAllCategories();
+
+            return new CollectionViewModel
+            {
+                Categories = categories.ToSelectListItem()
+            };
         }
 
         public async Task<List<CollectionViewModel>> GetLargestCollections()
@@ -92,36 +108,19 @@ namespace CollectionHub.Services
 
             var categories = await GetAllCategories();
 
-            var nonNullFieldNames = collection.GetNonNullStringFields();
+            var items = await _itemService.GetCollectionItems(id, collection.GetNonNullStringFields());
 
-            var items = await _itemService.GetCollectionItems(id, new Dictionary<string, string>(nonNullFieldNames));
-
-            return collection.ToCollectionViewModel(nonNullFieldNames, items, categories);
+            return collection.ToCollectionViewModel(items, categories);
         }
 
-        public async Task<CollectionViewModel> GetUserCollection(string userName, long id)
+        public async Task EditCollection(string userName, CollectionViewModel collectionViewModel)
         {
-            var collection = await _context.Collections
-                .AsNoTracking()
-                .Include(x => x.Category)
-                .Where(x => x.User.UserName == userName)
-                .FirstAsync(x => x.Id == id);
+            var categoryDb = await _context.Categories.FirstAsync(x => x.Name == collectionViewModel.Category);
 
-            var categories = await GetAllCategories();
+            var collectionDb = CreateCollectionDbInstance(collectionViewModel, categoryDb);
 
-            var nonNullFieldNames = collection.GetNonNullStringFields();
+            _context.Collections.Update(collectionDb);
 
-            var items = await _itemService.GetCollectionItems(id, new Dictionary<string, string>(nonNullFieldNames));
-
-            return collection.ToCollectionViewModel(nonNullFieldNames, items, categories);
-        }
-
-        public async Task CreateCollection(CollectionViewModel collection, string userName)
-        {
-            var user = await _userManager.FindByNameAsync(userName);
-            var category = await _context.Categories.FirstAsync(x => x.Name == collection.Category);
-
-            await _context.AddAsync(CreateCollectionDbInstance(user, collection, category));
             await _context.SaveChangesAsync();
         }
 
@@ -129,11 +128,11 @@ namespace CollectionHub.Services
         {
             var collection = await _context.Collections
                 .Include(x => x.Items)
-                .ThenInclude(x => x.Tags)
+                    .ThenInclude(x => x.Tags)
                 .Include(x => x.Items)
-                .ThenInclude(x => x.Comments)
+                    .ThenInclude(x => x.Comments)
                 .Include(x => x.Items)
-                .ThenInclude(x => x.Likes)
+                    .ThenInclude(x => x.Likes)
                 .FirstAsync(x => x.Id == id);
 
             foreach (var item in collection.Items)
@@ -159,37 +158,16 @@ namespace CollectionHub.Services
                  CreationDate = DateTimeOffset.Now
              };
 
-
-
-        private async Task<bool> UpdateCollectionFieldName(DataType type, CollectionDb collection, string name)
-        {
-            var propertyNames = type.ToCollectionProperty();
-
-            if (IsFieldExist(propertyNames, collection, name))
+        private CollectionDb CreateCollectionDbInstance(CollectionViewModel collectionViewModel, CategoryDb category) =>
+            new CollectionDb
             {
-                return false;
-            }
+                Id = collectionViewModel.Id,
+                Name = collectionViewModel.Name,
+                Description = collectionViewModel.Description,
+                CategoryId = category.Id,
+                ImageUrl = collectionViewModel.ImageUrl
+            };
 
-            foreach (var propertyName in propertyNames)
-            {
-                var property = collection.GetType().GetProperty(propertyName);
-                var value = (string)property.GetValue(collection);
-
-                if (value == null)
-                {
-                    property.SetValue(collection, name);
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool IsFieldExist(string[] propertyNames, CollectionDb collection, string name)
-        {
-            return propertyNames
-                .Select(propertyName => (string)collection.GetType().GetProperty(propertyName).GetValue(collection))
-                .ToList().Contains(name);
-        }
+        private async Task<List<string>> GetAllCategories() => await _context.Categories.AsNoTracking().Select(x => x.Name).ToListAsync();
     }
 }

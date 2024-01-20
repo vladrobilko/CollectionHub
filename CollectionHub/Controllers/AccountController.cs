@@ -25,7 +25,7 @@ namespace CollectionHub.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterUserViewModel registerModel)
         {
-            if (ModelState.IsValid && await _accountService.RegisterAsync(registerModel))
+            if (ModelState.IsValid && await _accountService.Register(registerModel))
             {
                 return RedirectToAction("MyCollections", "Collection");
             }
@@ -47,7 +47,7 @@ namespace CollectionHub.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginUserViewModel loginModel)
         {
-            if (ModelState.IsValid && await _accountService.LoginAsync(loginModel))
+            if (ModelState.IsValid && await _accountService.Login(loginModel))
             {
                 return RedirectToAction("MyCollections", "Collection");
             }
@@ -58,7 +58,7 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            await _accountService.LogoutAsync();
+            await _accountService.Logout();
 
             return RedirectToAction("Index", "Home");
         }

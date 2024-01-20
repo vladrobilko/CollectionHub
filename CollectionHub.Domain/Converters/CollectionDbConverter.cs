@@ -38,7 +38,7 @@ namespace CollectionHub.Domain.Converters
                 .ToDictionary(property => property.Name, property => (string)property.GetValue(collection)!);
         }
 
-        public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb, Dictionary<string, string> headersDb, List<List<string>> items, List<string> categories)
+        public static CollectionViewModel ToCollectionViewModel(this CollectionDb collectionDb, List<List<string>> items, List<string> categories)
         {
             return new CollectionViewModel
             {
@@ -46,7 +46,7 @@ namespace CollectionHub.Domain.Converters
                 Name = collectionDb.Name,
                 Description = collectionDb.Description,
                 ItemsDataTypes = GetItemsDataTypes(),
-                AllHeaders = GetItemHeaders(headersDb),
+                AllHeaders = GetItemHeaders(collectionDb.GetNonNullStringFields()),
                 Items = items, 
                 Category = collectionDb.Category.Name,
                 ImageUrl = collectionDb.ImageUrl,

@@ -20,7 +20,7 @@ namespace CollectionHub.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            return View(await _adminService.GetSortUsersAsync());
+            return View(await _adminService.GetSortUsers());
         }
 
         [Authorize(Roles = "Admin")]
@@ -32,7 +32,7 @@ namespace CollectionHub.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            await _adminService.HandleAdminActionAsync(action.ToUserManageActions(), selectedUserEmails);
+            await _adminService.HandleAdminAction(action.ToUserManageActions(), selectedUserEmails);
 
             return RedirectToAction("Admin");
         }

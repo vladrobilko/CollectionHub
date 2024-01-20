@@ -4,10 +4,10 @@ namespace CollectionHub.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task<bool> RegisterAsync(RegisterUserViewModel registerModel);
+        Task<bool> Register(RegisterUserViewModel registerModel);
 
-        Task<bool> LoginAsync(LoginUserViewModel loginModel);
+        Task<bool> Login(LoginUserViewModel loginModel);
 
-        Task LogoutAsync();
+        Task Logout();
     }
 }

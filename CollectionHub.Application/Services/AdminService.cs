@@ -12,13 +12,13 @@ namespace CollectionHub.Services
 
         public AdminService(UserManager<UserDb> userManager) => _userManager = userManager;
 
-        public async Task<List<UserDb>> GetSortUsersAsync()
+        public async Task<List<UserDb>> GetSortUsers()
         {
             var users = await _userManager.Users.AsNoTracking().ToListAsync();
             return users.OrderByDescending(u => u.IsAdmin).ToList();
         }
 
-        public async Task HandleAdminActionAsync(UserManageActions action, List<string> emails)//refactor
+        public async Task HandleAdminAction(UserManageActions action, List<string> emails)//refactor
         {
             if (action == UserManageActions.Delete)
                 await DeleteUsers(emails);

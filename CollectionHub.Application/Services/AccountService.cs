@@ -18,13 +18,13 @@ namespace CollectionHub.Services
             _signInManager = signInManager;
         }
 
-        public async Task<bool> RegisterAsync(RegisterUserViewModel registerModel)
+        public async Task<bool> Register(RegisterUserViewModel registerModel)
         {
             var result = await CreateAndSignInUserAsync(registerModel, CreateUser(registerModel));
             return result.Succeeded;
         }
 
-        public async Task<bool> LoginAsync(LoginUserViewModel loginModel)
+        public async Task<bool> Login(LoginUserViewModel loginModel)
         {
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
             if (user == null)
@@ -44,7 +44,7 @@ namespace CollectionHub.Services
             return user?.IsBlocked == false && signInResult.Succeeded;
         }
 
-        public async Task LogoutAsync() => await _signInManager.SignOutAsync();
+        public async Task Logout() => await _signInManager.SignOutAsync();
 
         private async Task<IdentityResult> CreateAndSignInUserAsync(RegisterUserViewModel registerModel, UserDb user)
         {

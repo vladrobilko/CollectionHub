@@ -82,7 +82,7 @@ namespace CollectionHub.Controllers
             }
             if (ModelState.IsValid)
             {
-                var result = await _collectionService.AddCollectionItemField(HttpContext.User.Identity.Name, collectionId, type.ToDataType(), name);
+                var result = await _collectionService.CreateCollectionItemField(HttpContext.User.Identity.Name, collectionId, type.ToDataType(), name);
                 if (!result)
                 {
                     TempData["ErrorMessage"] = "You can only add up to 3 fields of the same type, and names must be unique.";
