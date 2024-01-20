@@ -17,16 +17,13 @@ namespace CollectionHub.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchItems(string query)
-        {
-            return View(await _itemService.SearchItems(query));
-        }
+        public async Task<IActionResult> SearchItems(string query) => View(await _itemService.SearchItems(query));
 
         [HttpGet]
-        public async Task<IActionResult> GetItem(long itemId, long collectionId)
-        {
-            return View(await _itemService.GetItem(itemId, collectionId));
-        }
+        public async Task<IActionResult> GetItem(long itemId, long collectionId) => View(await _itemService.GetItem(itemId, collectionId));
+
+        [HttpGet]
+        public async Task<IActionResult> RecentlyAdded() => View(await _itemService.GetRecentlyAddedItemsForRead());
 
         [HttpPost]
         public async Task<IActionResult> AddComment(string comment, long itemId, long collectionId)
@@ -54,20 +51,9 @@ namespace CollectionHub.Controllers
             return RedirectToAction("GetItem", new { itemId, collectionId });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> RecentlyAdded()
-        {
-            return View(await _itemService.GetRecentlyAddedItemsForRead());
-        }
-
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> CreateItem(long collectionId)
-        {
-            var collection = await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, collectionId);
-
-            return View(collection);
-        }
+        public async Task<IActionResult> CreateItem(long collectionId) => View(await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, collectionId));
 
         [Authorize]
         [HttpPost]

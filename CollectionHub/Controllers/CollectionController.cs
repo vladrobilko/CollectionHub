@@ -13,23 +13,14 @@ namespace CollectionHub.Controllers
         public CollectionController(ICollectionService collectionService) => _collectionService = collectionService;
 
         [HttpGet]
-        public async Task<IActionResult> LargestCollections()
-        {
-            return View(await _collectionService.GetLargestCollections());
-        } 
+        public async Task<IActionResult> LargestCollections() => View(await _collectionService.GetLargestCollections());
 
         [HttpGet]
-        public async Task<IActionResult> GetCollectionForRead(int id)
-        {
-            return View(await _collectionService.GetCollectionForRead(id));
-        }
+        public async Task<IActionResult> GetCollectionForRead(int id) => View(await _collectionService.GetCollectionForRead(id));
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MyCollections()
-        {
-            return View(await _collectionService.GetUserCollections(HttpContext.User.Identity.Name));
-        }
+        public async Task<IActionResult> MyCollections() => View(await _collectionService.GetUserCollections(HttpContext.User.Identity.Name));
 
         [Authorize]
         [HttpGet]
@@ -52,6 +43,7 @@ namespace CollectionHub.Controllers
             if (ModelState.IsValid)
             {
                 await _collectionService.CreateCollection(collectionViewModel, HttpContext.User.Identity.Name);
+
                 return RedirectToAction("MyCollections");
             }
 
@@ -130,6 +122,7 @@ namespace CollectionHub.Controllers
             if (ModelState.IsValid)
             {
                 await _collectionService.EditCollection(HttpContext.User.Identity.Name, collectionViewModel);
+
                 return RedirectToAction("MyCollections");
             }
 

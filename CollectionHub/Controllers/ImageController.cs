@@ -16,8 +16,8 @@ namespace CollectionHub.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UploadImage(CollectionViewModel collectionViewModel)
         {
-            var imagePath = _imageService.UploadImageToAzureAndGiveImageLink(collectionViewModel.File);
-            TempData["ImageUrl"] = imagePath;
+            TempData["ImageUrl"] = _imageService.UploadImageToAzureAndGiveImageLink(collectionViewModel.File);
+
             return RedirectToAction("CreateCollection", "Collection");
         }
 
@@ -26,8 +26,8 @@ namespace CollectionHub.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpdateImage(CollectionViewModel collectionViewModel, long collectionId)
         {
-            var imagePath = _imageService.UploadImageToAzureAndGiveImageLink(collectionViewModel.File);
-            TempData["ImageUrl"] = imagePath;
+            TempData["ImageUrl"] = _imageService.UploadImageToAzureAndGiveImageLink(collectionViewModel.File);
+
             return RedirectToAction("EditCollection", "Collection", new { id = collectionId });
         }
     }

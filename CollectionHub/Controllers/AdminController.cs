@@ -15,10 +15,11 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Admin()
         {
-            if (await _adminService.IsUserBlockedOrNotAdmin(HttpContext.User.Identity.Name) || !HttpContext.User.Identity.IsAuthenticated)
+            if (await _adminService.IsUserBlockedOrNotAdmin(HttpContext.User.Identity.Name))
             {
                 return RedirectToAction("Login", "Account");
             }
+
             return View(await _adminService.GetSortUsersAsync());
         }
 
@@ -30,7 +31,9 @@ namespace CollectionHub.Controllers
             {
                 return RedirectToAction("Login", "Account");
             }
+
             await _adminService.HandleAdminActionAsync(action.ToUserManageActions(), selectedUserEmails);
+
             return RedirectToAction("Admin");
         }
     }

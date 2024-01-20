@@ -18,6 +18,7 @@ namespace CollectionHub.Controllers
             {
                 return RedirectToAction("MyCollections", "Collection");
             }
+
             return View();
         }
 
@@ -28,6 +29,7 @@ namespace CollectionHub.Controllers
             {
                 return RedirectToAction("MyCollections", "Collection");
             }
+
             return View("Register", registerModel);
         }
 
@@ -38,6 +40,7 @@ namespace CollectionHub.Controllers
             {
                 return RedirectToAction("MyCollections", "Collection");
             }
+
             return View();
         }
 
@@ -48,6 +51,7 @@ namespace CollectionHub.Controllers
             {
                 return RedirectToAction("MyCollections", "Collection");
             }
+
             return View("Login", loginModel);
         }
 
@@ -55,6 +59,7 @@ namespace CollectionHub.Controllers
         public async Task<IActionResult> Logout()
         {
             await _accountService.LogoutAsync();
+
             return RedirectToAction("Index", "Home");
         }
     }
