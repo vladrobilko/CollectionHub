@@ -67,7 +67,7 @@ app.UseRequestLocalization(options =>
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Error/Error");
     app.UseHsts();
 }
 
