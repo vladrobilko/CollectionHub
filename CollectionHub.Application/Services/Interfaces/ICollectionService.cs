@@ -21,6 +21,6 @@ namespace CollectionHub.Services.Interfaces
 
         Task EditCollection(string userName, CollectionViewModel collectionViewModel);
 
-        Task DeleteCollection(long id);
+        Task DeleteCollection(string userName, long id);
     }
 }

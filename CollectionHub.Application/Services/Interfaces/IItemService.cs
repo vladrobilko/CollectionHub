@@ -21,6 +21,6 @@ namespace CollectionHub.Services.Interfaces
 
         Task<List<ItemViewModel>> SearchItems(string query);
 
-        Task DeleteItem(long id);
+        Task DeleteItem(string userName, long id);
     }
 }

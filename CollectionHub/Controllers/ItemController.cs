@@ -94,7 +94,7 @@ namespace CollectionHub.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _itemService.DeleteItem(selectedItemId);
+                await _itemService.DeleteItem(HttpContext.User.Identity.Name, selectedItemId);
 
                 return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
             }

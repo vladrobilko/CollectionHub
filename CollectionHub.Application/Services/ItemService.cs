@@ -138,9 +138,10 @@ namespace CollectionHub.Services
 
         public async Task<List<ItemViewModel>> SearchItems(string query) => await _algolia.SearchItems(query);
 
-        public async Task DeleteItem(long id)
+        public async Task DeleteItem(string userName, long id)
         {
             var item = await _context.Items
+                .Where(x => x.Collection.User.UserName == userName && x.Id == id)
                 .Include(x => x.Tags)
                 .Include(x => x.Likes)
                 .Include(x => x.Comments)

@@ -96,7 +96,7 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteCollection(long id)
         {
-            await _collectionService.DeleteCollection(id);
+            await _collectionService.DeleteCollection(HttpContext.User.Identity.Name, id);
 
             return RedirectToAction("MyCollections");
         }

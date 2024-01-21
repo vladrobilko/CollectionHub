@@ -127,9 +127,10 @@ namespace CollectionHub.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteCollection(long id)
+        public async Task DeleteCollection(string userName, long id)
         {
             var collection = await _context.Collections
+                .Where(x => x.User.UserName == userName && x.Id == id)
                 .Include(x => x.Items)
                     .ThenInclude(x => x.Tags)
                 .Include(x => x.Items)
