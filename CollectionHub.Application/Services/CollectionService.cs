@@ -18,13 +18,16 @@ namespace CollectionHub.Services
         private readonly IItemService _itemService;
 
         private readonly ICollectionFieldNameUpdater _fieldNameUpdater;
+        
+        private readonly IAlgoliaIntegration _algolia;
 
-        public CollectionService(ApplicationDbContext context, UserManager<UserDb> userManager, IItemService itemService, ICollectionFieldNameUpdater fieldNameUpdater)
+        public CollectionService(ApplicationDbContext context, UserManager<UserDb> userManager, IItemService itemService, ICollectionFieldNameUpdater fieldNameUpdater, IAlgoliaIntegration algolia)
         {
             _context = context;
             _userManager = userManager;
             _itemService = itemService;
             _fieldNameUpdater = fieldNameUpdater;
+            _algolia = algolia;
         }
 
         public async Task CreateCollection(CollectionViewModel collection, string userName)
@@ -135,13 +138,19 @@ namespace CollectionHub.Services
                     .ThenInclude(x => x.Likes)
                 .FirstAsync(x => x.Id == id);
 
-            foreach (var item in collection.Items)
+            if (collection.Items.Count != 0)
             {
-                _context.Comments.RemoveRange(item.Comments);
-                _context.Likes.RemoveRange(item.Likes);
+                foreach (var item in collection.Items)
+                {
+                    _context.Comments.RemoveRange(item.Comments);
+                    _context.Likes.RemoveRange(item.Likes);
+                }
+                _context.Tags.RemoveRange(collection.Items.SelectMany(item => item.Tags));
+                _context.RemoveRange(collection.Items);
+
+                await _algolia.DeleteItems(collection.Items.Select(x => x.Id.ToString()));
             }
-            _context.Tags.RemoveRange(collection.Items.SelectMany(item => item.Tags));
-            _context.RemoveRange(collection.Items);
+
             _context.Remove(collection);
 
             await _context.SaveChangesAsync();

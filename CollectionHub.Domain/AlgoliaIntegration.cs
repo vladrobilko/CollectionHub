@@ -45,5 +45,7 @@ namespace CollectionHub.Domain
         }
 
         public async Task DeleteItem(long id) => await _searchClient.InitIndex("Item").DeleteObjectAsync(id.ToString());
+
+        public async Task DeleteItems(IEnumerable<string> ids) => await _searchClient.InitIndex("Item").DeleteObjectsAsync(ids);
     }
 }

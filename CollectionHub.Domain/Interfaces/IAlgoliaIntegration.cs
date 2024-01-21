@@ -12,5 +12,7 @@ namespace CollectionHub.Domain.Interfaces
         Task UpdateItem(ItemDb item);
 
         Task DeleteItem(long id);
+
+        Task DeleteItems(IEnumerable<string> ids);
     }
 }
