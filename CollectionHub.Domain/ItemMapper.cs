@@ -52,26 +52,11 @@ namespace CollectionHub.Domain
 
                 if (item.Key == nameof(ItemDb.Tags))
                 {
-                    UpdateTags(itemToUpdate, item.Value);
+                    itemToUpdate.Tags = item.Value.ToTags();
                 }
                 else
                 {
                     SetNullebleProperty(item, property, itemToUpdate);
-                }
-            }
-        }
-
-        private void UpdateTags(ItemDb itemToUpdate, string tagsValue)
-        {
-            var newTags = tagsValue.ToTags();
-
-            var existingTags = itemToUpdate.Tags.ToList();
-
-            foreach (var newTag in newTags)
-            {
-                if (!existingTags.Any(existingTag => existingTag.Name == newTag.Name))
-                {
-                    itemToUpdate.Tags.Add(newTag);
                 }
             }
         }

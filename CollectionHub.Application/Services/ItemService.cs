@@ -99,6 +99,8 @@ namespace CollectionHub.Services
                 .Include(x => x.Tags)
                 .FirstAsync(x => x.Id == itemId);
 
+            _context.Tags.RemoveRange(itemToUpdate.Tags);
+
             _itemMapper.UpdateItemFromFormFields(itemToUpdate, formCollection);
 
             await _context.SaveChangesAsync();

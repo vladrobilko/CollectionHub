@@ -116,13 +116,17 @@ namespace CollectionHub.Services
             return collection.ToCollectionViewModel(items, categories);
         }
 
-        public async Task EditCollection(string userName, CollectionViewModel collectionViewModel)
+        public async Task EditCollection(string userName, CollectionViewModel collectionViewModel)// change it 
         {
             var categoryDb = await _context.Categories.FirstAsync(x => x.Name == collectionViewModel.Category);
 
-            var collectionDb = CreateCollectionDbInstance(collectionViewModel, categoryDb);
+            var collectionDb = await _context.Collections
+                .FirstAsync(x => x.Id == collectionViewModel.Id);
 
-            _context.Collections.Update(collectionDb);
+            collectionDb.ImageUrl = collectionViewModel.ImageUrl;
+            collectionDb.CategoryId = categoryDb.Id;
+            collectionDb.Name = collectionViewModel.Name;
+            collectionDb.Description = collectionViewModel.Description;
 
             await _context.SaveChangesAsync();
         }
@@ -167,16 +171,6 @@ namespace CollectionHub.Services
                  CategoryId = category.Id,
                  CreationDate = DateTimeOffset.Now
              };
-
-        private CollectionDb CreateCollectionDbInstance(CollectionViewModel collectionViewModel, CategoryDb category) =>
-            new CollectionDb
-            {
-                Id = collectionViewModel.Id,
-                Name = collectionViewModel.Name,
-                Description = collectionViewModel.Description,
-                CategoryId = category.Id,
-                ImageUrl = collectionViewModel.ImageUrl
-            };
 
         private async Task<List<string>> GetAllCategories() => await _context.Categories.AsNoTracking().Select(x => x.Name).ToListAsync();
     }
