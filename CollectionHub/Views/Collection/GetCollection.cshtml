@@ -14,7 +14,14 @@
 <div class="row">
     <div class="col-md-6">
         <h2 class="text-left text-uppercase mb-4">@Model.Name</h2>
-        <p>@Model.Description</p>
+        @{
+            var renderer = new MarkdownSharp.Markdown();
+            string htmlDescription = renderer.Transform(Model.Description);
+        }
+
+        <div>
+            @Html.Raw(htmlDescription)
+        </div>
     </div>
     <div class="col-md-4 offset-md-1">
         <h2 class="text-uppercase mb-4">@Localizer["addColumn"]</h2>

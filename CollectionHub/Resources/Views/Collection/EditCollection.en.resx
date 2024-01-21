@@ -127,7 +127,7 @@
     <value>CREATE COLLECTION</value>
   </data>
   <data name="description" xml:space="preserve">
-    <value>Description:</value>
+    <value>Description(🌟 Markdown Supported! 🌟):</value>
   </data>
   <data name="edit" xml:space="preserve">
     <value>Edit</value>

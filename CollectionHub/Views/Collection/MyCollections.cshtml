@@ -35,9 +35,14 @@
                         <h5 class="card-title h4-sm">@collection.Name</h5>
                         <p class="card-text">
                             @{
-                                var truncatedDescription = @collection.Description.Length > 250 ? @collection.Description.Substring(0, 200) + "..." : @collection.Description;
+                                var truncatedDescription = @collection.Description.Length > 250 ? @collection.Description.Substring(0, 200) + "..." : @collection.Description;                          
+                                var renderer = new MarkdownSharp.Markdown();
+                                var htmlDescription = renderer.Transform(truncatedDescription);
                             }
-                            @truncatedDescription
+
+                            <div>
+                                @Html.Raw(htmlDescription)
+                            </div>
                         </p>
                         <a href="@Url.Action("GetCollection", "Collection", new { id = collection.Id })" class="stretched-link"></a>
                     </div>

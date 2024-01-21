@@ -130,7 +130,7 @@
     <value>კოლექციის შექმნა</value>
   </data>
   <data name="description" xml:space="preserve">
-    <value>აღწერა:</value>
+    <value>აღწერა(🌟 Markdown-ის მხარდაჭერა! 🌟):</value>
   </data>
   <data name="name" xml:space="preserve">
     <value>სახელი:</value>
