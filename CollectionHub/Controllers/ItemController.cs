@@ -1,4 +1,5 @@
-﻿using CollectionHub.Services.Interfaces;
+﻿using CollectionHub.Domain;
+using CollectionHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -73,7 +74,7 @@ namespace CollectionHub.Controllers
                 return View(await _itemService.GetItem(selectedItemId, collectionId));
             }
 
-            TempData["ErrorMessage"] = "Please select an item to edit";
+            TempData["ErrorMessage"] = ErrorMessageManager.ItemSelection;
 
             return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
         }

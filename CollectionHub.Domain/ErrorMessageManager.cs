@@ -10,6 +10,8 @@ namespace CollectionHub.Domain
 
         public const string TypeSelection = "Please select a type and enter a type name.";
 
+        public const string ItemSelection = "Please select an item to edit.";
+
         public static void SetErrorMessage(this LoginUserViewModel loginUser, SignInResult? result, UserDb? user) =>
             loginUser.ErrorMessage = result switch
             {
