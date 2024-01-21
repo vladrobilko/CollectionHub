@@ -1,4 +1,5 @@
-﻿using CollectionHub.Domain.Converters;
+﻿using CollectionHub.Domain;
+using CollectionHub.Domain.Converters;
 using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -76,19 +77,18 @@ namespace CollectionHub.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCollectionItemField(long collectionId, string type, string name)
         {
-            if (string.IsNullOrEmpty(type) || string.IsNullOrEmpty(name))
-            {
-                TempData["ErrorMessage"] = "Please select a type and enter a type name.";
-            }
             if (ModelState.IsValid)
             {
                 var result = await _collectionService.CreateCollectionItemField(HttpContext.User.Identity.Name, collectionId, type.ToDataType(), name);
                 if (!result)
                 {
-                    TempData["ErrorMessage"] = "You can only add up to 3 fields of the same type, and names must be unique.";
+                    TempData["ErrorMessage"] = ErrorMessageManager.FieldLimit;
                 }
                 return RedirectToAction("GetCollection", new { id = collectionId });
             }
+
+            TempData["ErrorMessage"] = ErrorMessageManager.TypeSelection;
+
             return RedirectToAction("GetCollection", new { id = collectionId });
         }
 

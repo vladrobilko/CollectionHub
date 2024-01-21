@@ -6,6 +6,10 @@ namespace CollectionHub.Domain
 {
     public static class ErrorMessageManager
     {
+        public const string FieldLimit = "You can only add up to 3 fields of the same type, and names must be unique.";
+
+        public const string TypeSelection = "Please select a type and enter a type name.";
+
         public static void SetErrorMessage(this LoginUserViewModel loginUser, SignInResult? result, UserDb? user) =>
             loginUser.ErrorMessage = result switch
             {
