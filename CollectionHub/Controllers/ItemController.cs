@@ -34,7 +34,7 @@ namespace CollectionHub.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            await _itemService.AddComment(HttpContext.User.Identity.Name, itemId, comment);
+            await _itemService.AddComment(this.GetUserNameFromContext(), itemId, comment);
 
             return RedirectToAction("GetItem", new { itemId, collectionId });
         }
@@ -47,20 +47,20 @@ namespace CollectionHub.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            await _itemService.ProcessLikeItem(HttpContext.User.Identity.Name, itemId);
+            await _itemService.ProcessLikeItem(this.GetUserNameFromContext(), itemId);
 
             return RedirectToAction("GetItem", new { itemId, collectionId });
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> CreateItem(long collectionId) => View(await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, collectionId));
+        public async Task<IActionResult> CreateItem(long collectionId) => View(await _collectionService.GetUserCollection(this.GetUserNameFromContext(), collectionId));
 
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateItem(IFormCollection formCollection)
         {
-            var collectionId = await _itemService.CreateItem(HttpContext.User.Identity.Name, formCollection);
+            var collectionId = await _itemService.CreateItem(this.GetUserNameFromContext(), formCollection);
 
             return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
         }
@@ -83,7 +83,7 @@ namespace CollectionHub.Controllers
         [HttpPost]
         public async Task<IActionResult> EditItem(IFormCollection formCollection)
         {
-            var collectionId = await _itemService.EditItem(HttpContext.User.Identity.Name, formCollection);
+            var collectionId = await _itemService.EditItem(this.GetUserNameFromContext(), formCollection);
 
             return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
         }
@@ -94,12 +94,12 @@ namespace CollectionHub.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _itemService.DeleteItem(HttpContext.User.Identity.Name, selectedItemId);
+                await _itemService.DeleteItem(this.GetUserNameFromContext(), selectedItemId);
 
                 return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
             }
 
-            TempData["ErrorMessage"] = "Please select an item to delete";
+            TempData["ErrorMessage"] = ErrorMessageManager.NoItemSelected;
 
             return RedirectToAction("GetCollection", "Collection", new { id = collectionId });
         }

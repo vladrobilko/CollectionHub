@@ -12,6 +12,8 @@ namespace CollectionHub.Domain
 
         public const string ItemSelection = "Please select an item to edit.";
 
+        public const string NoItemSelected = "Please select an item to delete";
+
         public static void SetErrorMessage(this LoginUserViewModel loginUser, SignInResult? result, UserDb? user) =>
             loginUser.ErrorMessage = result switch
             {

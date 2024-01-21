@@ -18,7 +18,7 @@ namespace CollectionHub.Services
             return users.OrderByDescending(u => u.IsAdmin).ToList();
         }
 
-        public async Task HandleAdminAction(UserManageActions action, List<string> emails)//refactor
+        public async Task HandleAdminAction(UserManageActions action, List<string> emails)
         {
             if (action == UserManageActions.Delete)
                 await DeleteUsers(emails);

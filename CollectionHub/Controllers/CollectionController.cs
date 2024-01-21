@@ -21,7 +21,7 @@ namespace CollectionHub.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MyCollections() => View(await _collectionService.GetUserCollections(HttpContext.User.Identity.Name));
+        public async Task<IActionResult> MyCollections() => View(await _collectionService.GetUserCollections(this.GetUserNameFromContext()));
 
         [Authorize]
         [HttpGet]
@@ -43,7 +43,7 @@ namespace CollectionHub.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _collectionService.CreateCollection(collectionViewModel, HttpContext.User.Identity.Name);
+                await _collectionService.CreateCollection(collectionViewModel, this.GetUserNameFromContext());
 
                 return RedirectToAction("MyCollections");
             }
@@ -62,13 +62,13 @@ namespace CollectionHub.Controllers
                 ModelState.AddModelError("error", errorMessage);
             }
 
-            return View(await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, id));
+            return View(await _collectionService.GetUserCollection(this.GetUserNameFromContext(), id));
         }
 
         [Authorize]
         public async Task<IActionResult> ExportCSV(long collectionId)
         {
-            var collection = await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, collectionId);
+            var collection = await _collectionService.GetUserCollection(this.GetUserNameFromContext(), collectionId);
 
             return File(collection.ToCsvBytes(), "text/csv", $"{collection.Name}.csv");
         }
@@ -79,7 +79,7 @@ namespace CollectionHub.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _collectionService.CreateCollectionItemField(HttpContext.User.Identity.Name, collectionId, type.ToDataType(), name);
+                var result = await _collectionService.CreateCollectionItemField(this.GetUserNameFromContext(), collectionId, type.ToDataType(), name);
                 if (!result)
                 {
                     TempData["ErrorMessage"] = ErrorMessageManager.FieldLimit;
@@ -96,7 +96,7 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteCollection(long id)
         {
-            await _collectionService.DeleteCollection(HttpContext.User.Identity.Name, id);
+            await _collectionService.DeleteCollection(this.GetUserNameFromContext(), id);
 
             return RedirectToAction("MyCollections");
         }
@@ -105,7 +105,7 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<IActionResult> EditCollection(long id)
         {
-            var collection = await _collectionService.GetUserCollection(HttpContext.User.Identity.Name, id);
+            var collection = await _collectionService.GetUserCollection(this.GetUserNameFromContext(), id);
 
             if (TempData.TryGetValue("ImageUrl", out var imagePath))
             {
@@ -121,7 +121,7 @@ namespace CollectionHub.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _collectionService.EditCollection(HttpContext.User.Identity.Name, collectionViewModel);
+                await _collectionService.EditCollection(this.GetUserNameFromContext(), collectionViewModel);
 
                 return RedirectToAction("MyCollections");
             }

@@ -36,5 +36,17 @@ namespace CollectionHub.Controllers
 
             return RedirectToAction("Admin");
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult ControlUser(string userName)
+        {
+            Response.Cookies.Append(
+                "UserName",
+                userName,
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
+
+            return RedirectToAction("MyCollections", "Collection");
+        }
     }
 }
