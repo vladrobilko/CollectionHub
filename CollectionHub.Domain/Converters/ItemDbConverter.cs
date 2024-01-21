@@ -1,4 +1,5 @@
-﻿using CollectionHub.DataManagement;
+﻿using Azure;
+using CollectionHub.DataManagement;
 using CollectionHub.Domain.Models;
 using CollectionHub.Domain.Models.ViewModels;
 using CollectionHub.Models.ViewModels;
@@ -56,7 +57,7 @@ namespace CollectionHub.Domain.Converters
             };
         }
 
-        public static ItemViewModel ToItemViewModel(this ItemDb item, long itemId, long collectionId, Dictionary<string, Dictionary<string, string>>  allHeadersWithValues) =>
+        public static ItemViewModel ToItemViewModel(this ItemDb item, long itemId, long collectionId, Dictionary<string, Dictionary<string, string>> allHeadersWithValues) =>
             new ItemViewModel()
             {
                 Id = itemId,
@@ -65,5 +66,7 @@ namespace CollectionHub.Domain.Converters
                 Likes = item.Likes.Count,
                 Comments = item.ToCommentViewModelList()
             };
+
+        public static string ToTagsString(this ItemDb item) => string.Join(", ", item.Tags.Select(tag => "#" + tag.Name));
     }
 }

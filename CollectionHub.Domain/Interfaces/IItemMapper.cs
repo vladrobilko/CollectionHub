@@ -7,9 +7,7 @@ namespace CollectionHub.Domain.Interfaces
     {
         Dictionary<string, Dictionary<string, string>> MapCollectionToItemProperties(CollectionDb collection, ItemDb item);
 
-        ItemDb MapFormFieldsToNewItem(IFormCollection formCollection);
-
-        void UpdateItemFromFormFields(ItemDb itemToUpdate, IFormCollection formCollection);
+        void MapFormFieldsToItem(ItemDb itemToUpdate, IFormCollection formCollection, bool isItemNew);
 
         List<List<string>> MapItemValuesToLists(List<ItemDb> items, Dictionary<string, string> fieldNames);
     }

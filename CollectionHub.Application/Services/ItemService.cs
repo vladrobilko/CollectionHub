@@ -33,7 +33,9 @@ namespace CollectionHub.Services
 
             await CheckIsUserHasCollection(userName, collectionId);
 
-            var newItem = _itemMapper.MapFormFieldsToNewItem(formCollection);
+            var newItem = new ItemDb();
+
+            _itemMapper.MapFormFieldsToItem(newItem, formCollection, isItemNew: true);
 
             newItem.CollectionId = collectionId;
             newItem.CreationDate = DateTimeOffset.Now;
@@ -101,7 +103,7 @@ namespace CollectionHub.Services
 
             _context.Tags.RemoveRange(itemToUpdate.Tags);
 
-            _itemMapper.UpdateItemFromFormFields(itemToUpdate, formCollection);
+            _itemMapper.MapFormFieldsToItem(itemToUpdate, formCollection, isItemNew: false);
 
             await _context.SaveChangesAsync();
             await _algolia.UpdateItem(itemToUpdate);

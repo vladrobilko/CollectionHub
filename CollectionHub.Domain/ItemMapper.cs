@@ -8,10 +8,42 @@ namespace CollectionHub.Domain
 {
     public class ItemMapper : IItemMapper
     {
+        public Dictionary<string, Dictionary<string, string>> MapCollectionToItemProperties(CollectionDb collection, ItemDb item)
+        {
+            var nonNullFieldNames = collection.GetNonNullStringFields();
+
+            var itemProperties = nonNullFieldNames.ToDictionary(
+                    kvp => kvp.Key.ToItemDbProperty(),
+                    kvp => kvp.Value
+                );
+
+            return MapItemToDictionary(itemProperties, item);
+        }
+
+        public void MapFormFieldsToItem(ItemDb itemToUpdate, IFormCollection formCollection, bool isItemNew)
+        {
+            var fieldsWithValues = formCollection.ToDictionary();
+            var itemDbProperties = typeof(ItemDb).GetProperties();
+
+            foreach (var item in fieldsWithValues)
+            {
+                if (item.Key == nameof(ItemDb.Tags))
+                {
+                    itemToUpdate.Tags = item.Value.ToTags();
+                }
+                else
+                {
+                    var propertyName = isItemNew ? item.Key.ToItemDbProperty() : item.Key;
+                    var property = itemDbProperties.FirstOrDefault(p => p.Name == propertyName);
+
+                    SetNullebleProperty(item, property, itemToUpdate);
+                }
+            }
+        }
+
         public List<List<string>> MapItemValuesToLists(List<ItemDb> items, Dictionary<string, string> fieldNames)
         {
             var itemProperties = fieldNames.ToItemPropertyNames();
-
             var result = new List<List<string>>();
 
             foreach (var item in items)
@@ -20,19 +52,10 @@ namespace CollectionHub.Domain
                 {
                     item.Id.ToString(),
                     item.Name,
-                    string.Join(", ", item.Tags.Select(tag => "#" + tag.Name))
+                    item.ToTagsString()
                 };
 
-                foreach (var fieldName in itemProperties)
-                {
-                    var propertyInfo = typeof(ItemDb).GetProperty(fieldName);
-
-                    if (propertyInfo != null)
-                    {
-                        var value = GetPropertyValueAsString(propertyInfo, item);
-                        itemValues.Add(value);
-                    }
-                }
+                AddPropertyValuesToList(itemValues, itemProperties, item);
 
                 result.Add(itemValues);
             }
@@ -40,50 +63,18 @@ namespace CollectionHub.Domain
             return result;
         }
 
-        public void UpdateItemFromFormFields(ItemDb itemToUpdate, IFormCollection formCollection)
+        private void AddPropertyValuesToList(List<string> itemValues, List<string> itemProperties, ItemDb item)
         {
-            var fieldsWithValues = formCollection.ToDictionary();
-
-            var itemDbProperties = typeof(ItemDb).GetProperties();
-
-            foreach (var item in fieldsWithValues)
+            foreach (var fieldName in itemProperties)
             {
-                var property = itemDbProperties.FirstOrDefault(p => p.Name == item.Key);
+                var propertyInfo = typeof(ItemDb).GetProperty(fieldName);
 
-                if (item.Key == nameof(ItemDb.Tags))
+                if (propertyInfo != null)
                 {
-                    itemToUpdate.Tags = item.Value.ToTags();
-                }
-                else
-                {
-                    SetNullebleProperty(item, property, itemToUpdate);
+                    var value = GetPropertyValueAsString(propertyInfo, item);
+                    itemValues.Add(value);
                 }
             }
-        }
-
-        public ItemDb MapFormFieldsToNewItem(IFormCollection formCollection)
-        {
-            var fieldsWithValues = formCollection.ToDictionary();
-
-            var itemDbProperties = typeof(ItemDb).GetProperties();
-
-            var newItem = new ItemDb();
-
-            foreach (var item in fieldsWithValues)
-            {
-                var property = itemDbProperties.FirstOrDefault(p => p.Name == item.Key.ToItemDbProperty());
-
-                if (item.Key == nameof(ItemDb.Tags))
-                {
-                    newItem.Tags = item.Value.ToTags();
-                }
-                else
-                {
-                    SetNullebleProperty(item, property, newItem);
-                }
-            }
-
-            return newItem;
         }
 
         private void SetNullebleProperty(KeyValuePair<string, string> item, PropertyInfo property, ItemDb itemToSet)
@@ -113,34 +104,12 @@ namespace CollectionHub.Domain
             return Convert.ChangeType(value, t);
         }
 
-        public Dictionary<string, Dictionary<string, string>> MapCollectionToItemProperties(CollectionDb collection, ItemDb item)
-        {
-
-            var nonNullFieldNames = collection.GetNonNullStringFields();
-            var itemProperties = nonNullFieldNames.ToDictionary(
-                    kvp => kvp.Key.ToItemDbProperty(),
-                    kvp => kvp.Value
-                );
-
-            return MapItemToDictionary(itemProperties, item);
-        }
-
         private Dictionary<string, Dictionary<string, string>> MapItemToDictionary(Dictionary<string, string> itemProperties, ItemDb item)
         {
             var result = new Dictionary<string, Dictionary<string, string>>
             {
-                {
-                    nameof(ItemDb.Name), new Dictionary<string, string>
-                    {
-                        { nameof(ItemDb.Name), item.Name }
-                    }
-                },
-                {
-                    nameof(ItemDb.Tags), new Dictionary<string, string>
-                    {
-                        { nameof(ItemDb.Tags), string.Join(", ", item.Tags.Select(tag => "#" + tag.Name)) }
-                    }
-                },
+                { nameof(ItemDb.Name), MapItemProperty(nameof(ItemDb.Name), item.Name) },
+                { nameof(ItemDb.Tags), MapItemProperty(nameof(ItemDb.Tags), item.ToTagsString()) },
             };
 
             foreach (var fieldName in itemProperties.Keys)
@@ -150,10 +119,7 @@ namespace CollectionHub.Domain
                 if (propertyInfo != null)
                 {
                     var value = GetPropertyValueAsString(propertyInfo, item);
-                    result.Add(fieldName, new Dictionary<string, string>
-                    {
-                        { itemProperties[fieldName], value }
-                    });
+                    result.Add(fieldName, MapItemProperty(itemProperties[fieldName], value));
                 }
             }
 
@@ -170,6 +136,14 @@ namespace CollectionHub.Domain
             }
 
             return value?.ToString() ?? "-";
+        }
+
+        private Dictionary<string, string> MapItemProperty(string propertyName, string propertyValue)
+        {
+            return new Dictionary<string, string>
+            {
+                { propertyName, propertyValue }
+            };
         }
     }
 }
