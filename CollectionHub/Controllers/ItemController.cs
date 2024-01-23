@@ -27,16 +27,16 @@ namespace CollectionHub.Controllers
         public async Task<IActionResult> RecentlyAdded() => View(await _itemService.GetRecentlyAddedItemsForRead());
 
         [HttpPost]
-        public async Task<IActionResult> AddComment(string comment, long itemId, long collectionId)
+        public async Task<IActionResult> AddComment(string text, long itemId, long collectionId)
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            await _itemService.AddComment(this.GetUserNameFromContext(), itemId, comment);
+            await _itemService.AddComment(this.GetUserNameFromContext(), itemId, text);
 
-            return RedirectToAction("GetItem", new { itemId, collectionId });
+            return NoContent();
         }
 
         [HttpGet]

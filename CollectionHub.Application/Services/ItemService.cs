@@ -6,6 +6,9 @@ using CollectionHub.Domain.Converters;
 using CollectionHub.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using CollectionHub.Domain.Interfaces;
+using CollectionHub.Domain;
+using Microsoft.AspNetCore.SignalR;
+using CollectionHub.Domain.Models.ViewModels;
 
 namespace CollectionHub.Services
 {
@@ -19,12 +22,15 @@ namespace CollectionHub.Services
 
         private readonly IItemMapper _itemMapper;
 
-        public ItemService(ApplicationDbContext context, UserManager<UserDb> userManager, IAlgoliaIntegration algolia, IItemMapper itemMapper)
+        private readonly IHubContext<CommentsHub> _commentsHubContext;
+
+        public ItemService(ApplicationDbContext context, UserManager<UserDb> userManager, IAlgoliaIntegration algolia, IItemMapper itemMapper, IHubContext<CommentsHub> commentsHubContext)
         {
             _context = context;
             _userManager = userManager;
             _algolia = algolia;
             _itemMapper = itemMapper;
+            _commentsHubContext = commentsHubContext;
         }
 
         public async Task<long> CreateItem(string userName, IFormCollection formCollection)
@@ -135,9 +141,13 @@ namespace CollectionHub.Services
         {
             var user = await _userManager.FindByNameAsync(userName);
 
-            _context.Add(CreateCommentDbInstance(user, itemId, text));
+            var commentDb = CreateCommentDbInstance(user, itemId, text);
+
+            _context.Add(commentDb);
 
             await _context.SaveChangesAsync();
+
+            await _commentsHubContext.Clients.Group($"Item_{itemId}").SendAsync("Receive", commentDb.ToCommentViewModel(user));
         }
 
         public async Task<List<ItemViewModel>> SearchItems(string query) => await _algolia.SearchItems(query);

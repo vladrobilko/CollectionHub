@@ -41,7 +41,7 @@ namespace CollectionHub.Domain.Converters
                 });
             }
 
-            return comments.OrderBy(x => x.Date).ToList();
+            return comments.OrderByDescending(x => x.Date).ToList();
         }
 
         public static ItemAlgoliaModel ToItemAlgoliaModel(this ItemDb item)

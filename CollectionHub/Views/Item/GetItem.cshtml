@@ -22,54 +22,52 @@
 
         <div class="p-4 d-flex align-items-center">
             <i class="fa-regular fa-comment" style="color: #0077cc;"></i>
-            <span class="ms-1">@Model.Comments.Count</span>
+            <span id="commentCount" class="ms-1">@Model.Comments.Count</span>
 
             <a href="@Url.Action("PressLike", "Item", new { itemId = Model.Id, collectionId = Model.CollectionId })" class="like-button ms-3">
                 <i class="fa-regular fa-heart" style="color: #0077cc;"></i>
             </a>
             <span class="ms-1">@Model.Likes</span>
         </div>
-        <h3>@Localizer["comments"]</h3>
-        @if (Model.Comments != null && Model.Comments.Any())
-        {
-            @foreach (var comment in Model.Comments)
-            {
-                <div class="card noHover">
-                    <div class="card-body">
-                        <div class="d-flex flex-start align-items-center">
-                            <div>
-                                <h6 class="fw-bold text-primary mb-1">@comment.UserName</h6>
-                                <p class="text-muted small mb-0">@Localizer["posted"] @comment.Date.ToString("MMMM dd, yyyy h:mm tt")</p>
-                            </div>
-                        </div>
-                        <p class="mt-3 mb-0 pb-2">@comment.Text</p>
+        <div class="mb-5">
+            <form method="post" asp-action="AddComment">
+                <input type="hidden" name="itemId" value="@Model.Id" />
+                <input type="hidden" name="collectionId" value="@Model.CollectionId" />
+
+                <div class="d-flex flex-start w-100">
+                    <div class="form-outline w-100">
+                        <textarea class="form-control" name="text" rows="4" id="output" required></textarea>
                     </div>
                 </div>
-            }
-        }
-        else
-        {
-            <p>@Localizer["addFirstComment"]</p>
-        }
-
-        <form method="post" asp-action="AddComment">
-            <input type="hidden" name="itemId" value="@Model.Id" />
-            <input type="hidden" name="collectionId" value="@Model.CollectionId" />
-
-            <div class="d-flex flex-start w-100">
-                <div class="form-outline w-100">
-                    <textarea class="form-control" name="comment" rows="4" required></textarea>
+                <div class="float-end mt-2 pt-1">
+                    <button type="submit" class="btn btn-primary btn-sm" onclick="setButtonPressedTrue();">@Localizer["addComment"]</button>
                 </div>
-            </div>
-            <div class="float-end mt-2 pt-1">
-                <button type="submit" class="btn btn-primary btn-sm">@Localizer["addComment"]</button>
-            </div>
-        </form>
+            </form>
+        </div>
+
+        <h3>@Localizer["comments"]</h3>
+        <div id="commentContainer">
+            @if (Model.Comments != null && Model.Comments.Any())
+            {
+                @foreach (var comment in Model.Comments)
+                {
+                    <div class="card noHover">
+                        <div class="card-body">
+                            <div class="d-flex flex-start align-items-center">
+                                <div>
+                                    <h6 class="fw-bold text-primary mb-1">@comment.UserName</h6>
+                                    <p class="text-muted small mb-0">@Localizer["posted"] @comment.Date.ToString("MMMM dd, yyyy h:mm tt")</p>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 pb-2">@comment.Text</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
 
     </div>
 </div>
-
-
 
 @functions {
     IHtmlContent RenderAccordionSection(string title, IEnumerable<KeyValuePair<string, Dictionary<string, string>>> items, string collapseId)
@@ -100,3 +98,62 @@
         return new HtmlString(writer.ToString());
     }
 }
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+
+<script>
+    var isButtonPressed = false;
+
+    function clearTextarea() {
+        $("#output").val("");
+        isButtonPressed = false;
+    }
+
+    function setButtonPressedTrue() {
+        isButtonPressed = true;
+    }
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("/comments").build();
+
+    connection.on("Receive", function (comment) {
+        var formattedDate = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        }).format(new Date(comment.date));
+
+        var commentContainer = document.getElementById("commentContainer");
+        var newComment = document.createElement("div");
+
+        newComment.className = "card noHover new-comment";
+        newComment.innerHTML = `
+                            <div class="card-body">
+                                <div class="d-flex flex-start align-items-center">
+                                    <div>
+                                        <h6 class="fw-bold text-primary mb-1">${comment.userName}</h6>
+                                        <p class="text-muted small mb-0">@Localizer["posted"] ${formattedDate}</p>
+                                    </div>
+                                </div>
+                                <p class="mt-3 mb-0 pb-2">${comment.text}</p>
+                            </div>
+                        `;
+        commentContainer.insertBefore(newComment, commentContainer.firstChild);
+
+        var commentCountSpan = document.getElementById("commentCount");
+        var currentCommentCount = parseInt(commentCountSpan.innerText);
+        commentCountSpan.innerText = currentCommentCount + 1;
+
+        if (isButtonPressed == true) {
+            clearTextarea();
+        }
+    });
+
+    connection.start().then(function () {
+        connection.invoke("JoinGroup", "Item_@Model.Id");
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+</script>

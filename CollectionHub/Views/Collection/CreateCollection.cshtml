@@ -10,7 +10,7 @@
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-12 col-sm-6 col-md-3">
+    <div class="col-12 col-sm-6 col-md-3 order-2 order-sm-1 order-md-1">
         <form id="imageForm" method="post" action="@Url.Action("UploadImage", "Image")" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             @if (!string.IsNullOrEmpty(Model.ImageUrl))
@@ -28,7 +28,7 @@
             <button type="submit" id="submitButton" style="display: none;"></button>
         </form>
     </div>
-    <div class="col-12 col-sm-6 col-md-4">
+    <div class="col-12 col-sm-6 col-md-4 order-1 order-sm-2 order-md-2">
         <form id="createCollectionForm" method="post" asp-action="CreateCollection">
 
             <input type="hidden" asp-for="Categories" value="@Model.Categories" />
