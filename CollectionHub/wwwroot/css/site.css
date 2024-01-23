@@ -81,3 +81,17 @@ body {
 .noHover {
     pointer-events: none;
 }
+
+@keyframes highlightNewComment {
+    from {
+        background-color: #ffeb3b;
+    }
+
+    to {
+        background-color: transparent;
+    }
+}
+
+.new-comment {
+    animation: highlightNewComment 2s ease-out;
+}
