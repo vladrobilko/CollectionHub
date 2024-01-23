@@ -120,6 +120,9 @@
   <data name="createCollections" xml:space="preserve">
     <value>Create new collection</value>
   </data>
+  <data name="explanation" xml:space="preserve">
+    <value>You don't have any collections. To create a collection, click create new collection</value>
+  </data>
   <data name="myCollections" xml:space="preserve">
     <value>MY COLLECTIONS</value>
   </data>

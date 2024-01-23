@@ -120,6 +120,9 @@
   <data name="createCollections" xml:space="preserve">
     <value>შექმენით ახალი კოლექცია</value>
   </data>
+  <data name="explanation" xml:space="preserve">
+    <value>კოლექციები არ გაქვთ. კოლექციის შესაქმნელად დააჭირეთ ახალი კოლექციის შექმნას</value>
+  </data>
   <data name="myCollections" xml:space="preserve">
     <value>ჩემი კოლექციები</value>
   </data>
