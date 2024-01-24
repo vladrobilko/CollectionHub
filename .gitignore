@@ -370,3 +370,9 @@ FodyWeavers.xsd
 /CollectionHub.Infrastructure/Migrations/20240112132831_remove-uniue-tag-name.cs
 /CollectionHub.Infrastructure/Migrations/20240112132831_remove-uniue-tag-name.Designer.cs
 /CollectionHub/Properties/launchSettings.json
+/CollectionHub/.config/dotnet-tools.json
+/CollectionHub/Properties/serviceDependencies.collectionhub - Web Deploy.json
+/CollectionHub/Properties/serviceDependencies.json
+/CollectionHub/CollectionHub.csproj
+/CollectionHub/Properties/ServiceDependencies/collectionhub - Web Deploy/mssql1.arm.json
+/CollectionHub/Properties/ServiceDependencies/collectionhub - Web Deploy/profile.arm.json
