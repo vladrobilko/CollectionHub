@@ -64,7 +64,7 @@
 </div>
 
 
-<div class="table-responsive">
+<div class="table-responsive mt-2">
     <table class="table">
         <thead>
             <tr>
@@ -110,6 +110,8 @@
 @section scripts {
     <script>
         $(document).ready(function () {
+            $('.table').DataTable();
+
             $(".item-radio").change(function () {
                 var selectedId = $(".item-radio:checked").data("item-id");
                 $("#editSelectedItemId").val(selectedId);

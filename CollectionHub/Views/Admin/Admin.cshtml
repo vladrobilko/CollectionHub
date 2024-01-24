@@ -61,6 +61,8 @@
 
 <script>
     $(document).ready(function () {
+        $('.table').DataTable();
+
         $('#selectAll').change(function () {
             var isChecked = $(this).prop('checked');
             $('.userCheckbox').prop('checked', isChecked);

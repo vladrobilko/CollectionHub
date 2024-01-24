@@ -120,7 +120,7 @@
   <data name="collection" xml:space="preserve">
     <value>Collection</value>
   </data>
-  <data name="Dark" xml:space="preserve">
+  <data name="dark" xml:space="preserve">
     <value>Dark</value>
   </data>
   <data name="language" xml:space="preserve">
@@ -129,7 +129,7 @@
   <data name="largestCollections" xml:space="preserve">
     <value>Largest collections</value>
   </data>
-  <data name="Light" xml:space="preserve">
+  <data name="light" xml:space="preserve">
     <value>Light</value>
   </data>
   <data name="logout" xml:space="preserve">
