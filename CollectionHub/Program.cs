@@ -17,6 +17,13 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["GoogleClientId"];
+        options.ClientSecret = builder.Configuration["GoogleClientSecret"];
+    });
+
 builder.Services.AddSignalR();
 builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection("Azure"));
 builder.Services.AddScoped<IAccountService, AccountService>();

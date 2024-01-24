@@ -2,7 +2,9 @@
 using CollectionHub.Domain;
 using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace CollectionHub.Services
 {
@@ -16,6 +18,40 @@ namespace CollectionHub.Services
         {
             _userManager = userManager;
             _signInManager = signInManager;
+        }
+
+        public Task<AuthenticationProperties> GetGoogleExternalAuthProperties(string redirectUrl)
+        {
+            var properties  = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+
+            return Task.FromResult(properties);
+        } 
+
+        public async Task<bool> ExternalSignIn()
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync() ?? throw new NotImplementedException();
+
+            var resultSignIn = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if (resultSignIn.Succeeded)
+            {
+                return true;
+            }
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email) ?? throw new NotImplementedException();
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return await CreateAndSignInExternalUserAsync(info, email);
+            }
+
+            await _userManager.AddLoginAsync(user, info);
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            return true;
         }
 
         public async Task<bool> Register(RegisterUserViewModel registerModel)
@@ -59,6 +95,22 @@ namespace CollectionHub.Services
                 registerModel.ErrorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
             }
             return result;
+        }
+
+        private async Task<bool> CreateAndSignInExternalUserAsync(ExternalLoginInfo info, string email)
+        {
+            var user = new UserDb { UserName = email, IsAdmin = false, IsBlocked = false, ViewName = email.Split('@')[0], Email = email };
+
+            var createUserResult = await _userManager.CreateAsync(user);
+
+            if (createUserResult.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "User");
+                await _userManager.AddLoginAsync(user, info);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+            }
+
+            return createUserResult.Succeeded;
         }
 
         private async Task UpdateUserAsync(UserDb user)

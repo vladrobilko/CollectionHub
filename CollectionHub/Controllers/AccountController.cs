@@ -1,5 +1,6 @@
 ﻿using CollectionHub.Models.ViewModels;
 using CollectionHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollectionHub.Controllers
@@ -61,6 +62,32 @@ namespace CollectionHub.Controllers
             await _accountService.Logout();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleSignIn()
+        {
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
+            var properties = await _accountService.GetGoogleExternalAuthProperties(redirectUrl);
+
+            return Challenge(properties, "Google");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback(string? remoteError)
+        {
+            if (remoteError != null)
+            {
+                return View("Login", new LoginUserViewModel { ErrorMessage = remoteError });
+            }
+
+            if (await _accountService.ExternalSignIn())
+            {
+                return RedirectToAction("MyCollections", "Collection");
+            }
+
+            return RedirectToAction("LogIn", "User");
         }
     }
 }

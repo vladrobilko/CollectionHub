@@ -1,4 +1,5 @@
 ﻿using CollectionHub.Models.ViewModels;
+using Microsoft.AspNetCore.Authentication;
 
 namespace CollectionHub.Services.Interfaces
 {
@@ -7,6 +8,10 @@ namespace CollectionHub.Services.Interfaces
         Task<bool> Register(RegisterUserViewModel registerModel);
 
         Task<bool> Login(LoginUserViewModel loginModel);
+
+        Task<AuthenticationProperties> GetGoogleExternalAuthProperties(string redirectUrl);
+
+        Task<bool> ExternalSignIn();
 
         Task Logout();
     }

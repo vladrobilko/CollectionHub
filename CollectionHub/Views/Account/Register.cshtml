@@ -36,6 +36,14 @@
             </div>
 
             <button type="submit" class="w-100 btn btn-lg btn-primary">@Localizer["register"]</button>
+
+            <hr class="my-4">
+
+            <a class="w-100 btn btn-lg btn-outline-success" href="@Url.Action("GoogleSignIn", "Account")">
+                <i class="fa-brands fa-google" style="color: red;"></i>
+                Sign In with Google
+            </a>
+
             <p class="mt-3">@Localizer["withAccount1"] <a asp-action="Login" class="text-primary">@Localizer["withAccount2"]</a>.</p>
         </form>
     </div>
