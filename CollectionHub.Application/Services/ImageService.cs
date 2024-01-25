@@ -12,6 +12,6 @@ namespace CollectionHub.Services
 
         public ImageService(IOptions<AzureOptions> azureOptions) => _azureOptions = azureOptions.Value;
 
-        public string UploadImageToAzureAndGiveImageLink(IFormFile file) => AzureImageUploader.Upload(file, _azureOptions);
+        public string UploadImageToAzureAndGiveImageLink(IFormFile? file) => AzureImageUploader.Upload(file, _azureOptions);
     }
 }

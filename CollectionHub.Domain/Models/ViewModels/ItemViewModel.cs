@@ -18,6 +18,6 @@ namespace CollectionHub.Models.ViewModels
 
         public Dictionary<string, Dictionary<string, string>>? AllHeadersWithValues { get; set; }
 
-        public List<CommentViewModel> Comments { get; set; }
+        public List<CommentViewModel>? Comments { get; set; }
     }
 }

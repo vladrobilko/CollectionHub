@@ -13,32 +13,33 @@
 
         <form method="post" asp-action="CreateItem">
             <input type="hidden" name="id" value="@Model.Id" />
-
-            @foreach (var item in Model.AllHeaders)
+            @if (Model.AllHeaders != null)
             {
-                <div class="form-group mb-3">
-                    <label asp-for="@item.Value">@item.Value:</label>
-                    @if (item.Key.ToDataType() == DataType.Text)
-                    {
-                        <textarea name="@item.Key" rows="4" cols="50" class="form-control" placeholder="Enter @item.Value" required></textarea>
-                    }
-                    else if (item.Key.ToDataType() == DataType.Bool)
-                    {
-                        <div class="form-check">
-                            <input type="hidden" name="@item.Key" value="">
-                            <input name="@item.Key" type="checkbox" class="form-check-input">
-                        </div>
-                    }
-                    else if (item.Key.ToDataType() == DataType.Integer)
-                    {
-                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" required>
-                    }
-                    else
-                    {
-                        <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" placeholder="Enter @item.Value" required>
-                    }
-                </div>
-
+                foreach (var item in Model.AllHeaders)
+                {
+                    <div class="form-group mb-3">
+                        <label asp-for="@item.Value">@item.Value:</label>
+                        @if (item.Key.ToDataType() == DataType.Text)
+                        {
+                            <textarea name="@item.Key" rows="4" cols="50" class="form-control" placeholder="Enter @item.Value" required></textarea>
+                        }
+                        else if (item.Key.ToDataType() == DataType.Bool)
+                        {
+                            <div class="form-check">
+                                <input type="hidden" name="@item.Key" value="">
+                                <input name="@item.Key" type="checkbox" class="form-check-input">
+                            </div>
+                        }
+                        else if (item.Key.ToDataType() == DataType.Integer)
+                        {
+                            <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" required>
+                        }
+                        else
+                        {
+                            <input name="@item.Key" type="@item.Key.ToDataType().ToInputType()" class="form-control" placeholder="Enter @item.Value" required>
+                        }
+                    </div>
+                }
             }
             <button type="submit" class="w-100 btn btn-lg btn-primary">@Localizer["create"]</button>
         </form>

@@ -31,9 +31,13 @@
                         <h5 class="card-title h4-sm">@collection.Name</h5>
                         <p class="card-text">
                             @{
-                                var truncatedDescription = @collection.Description.Length > 250 ? @collection.Description.Substring(0, 200) + "..." : @collection.Description;
-                                var renderer = new MarkdownSharp.Markdown();
-                                var htmlDescription = renderer.Transform(truncatedDescription);
+                                var htmlDescription = string.Empty;
+                                if (@collection.Description != null)
+                                {
+                                    var truncatedDescription = @collection.Description.Length > 250 ? @collection.Description.Substring(0, 200) + "..." : @collection.Description;
+                                    var renderer = new MarkdownSharp.Markdown();
+                                    htmlDescription = renderer.Transform(truncatedDescription);
+                                }
                             }
 
                             <div>

@@ -8,7 +8,7 @@ namespace CollectionHub.Domain
 {
     public static class AzureImageUploader
     {
-        public static string Upload(IFormFile file, AzureOptions azureOptions)
+        public static string Upload(IFormFile? file, AzureOptions azureOptions)
         {
             EnsureFileIsValid(file);
 
@@ -22,7 +22,7 @@ namespace CollectionHub.Domain
             return azureOptions.BlobURL + "/" + uniqueName;
         }
 
-        private static void EnsureFileIsValid(IFormFile file)
+        private static void EnsureFileIsValid(IFormFile? file)
         {
             if (file == null || file.FileName == null)
             {

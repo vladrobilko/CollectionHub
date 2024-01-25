@@ -20,7 +20,7 @@ namespace CollectionHub.Domain.Converters
         {
             return new ItemViewModel
             {
-                Id = long.Parse(item.ObjectID),
+                Id = long.Parse(item.ObjectID ?? throw new NullReferenceException()),
                 CollectionId = item.CollectionId,
                 Name = item.Name,
                 CollectionName = item.CollectionName

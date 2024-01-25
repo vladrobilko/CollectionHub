@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using CollectionHub.Domain.Interfaces;
 using CollectionHub.Domain;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CollectionHub.Services
 {
@@ -120,7 +121,7 @@ namespace CollectionHub.Services
 
         public async Task ProcessLikeItem(string userName, long itemId)
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName) ?? throw new AccessViolationException();
 
             var existingLike = await _context.Likes
                 .Where(like => like.UserId == user.Id && like.ItemId == itemId)
@@ -140,7 +141,7 @@ namespace CollectionHub.Services
 
         public async Task AddComment(string userName, long itemId, string text)
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName) ?? throw new AccessViolationException();
 
             var commentDb = CreateCommentDbInstance(user, itemId, text);
 
@@ -160,7 +161,7 @@ namespace CollectionHub.Services
                 .Include(x => x.Tags)
                 .Include(x => x.Likes)
                 .Include(x => x.Comments)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstAsync(x => x.Id == id);
 
             _context.Likes.RemoveRange(item.Likes);
             _context.Comments.RemoveRange(item.Comments);

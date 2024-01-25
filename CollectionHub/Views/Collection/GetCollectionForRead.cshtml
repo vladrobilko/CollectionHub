@@ -28,46 +28,49 @@
     </div>
 </div>
 
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                @foreach (var header in Model.AllHeaders)
+@if (Model.AllHeaders != null)
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    @foreach (var header in Model.AllHeaders)
+                    {
+                        <th scope="col">@header.Value</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
                 {
-                    <th scope="col">@header.Value</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Items != null)
-            {
-                for (int i = 0; i < Model.Items.Count; i++)
-                {
-                    var rowData = Model.Items[i];
+                    for (int i = 0; i < Model.Items.Count; i++)
+                    {
+                        var rowData = Model.Items[i];
 
-                    <tr>
-                        <td>@(i + 1)</td>
-                        @for (int j = 1; j < rowData.Count; j++)
-                        {
-                            if (j == 1)
+                        <tr>
+                            <td>@(i + 1)</td>
+                            @for (int j = 1; j < rowData.Count; j++)
                             {
-                                <td>
-                                    <a href="@Url.Action("GetItem", "Item", new { itemId = rowData[0], collectionId = Model.Id })"
-                                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">@rowData[j]</a>
-                                </td>
+                                if (j == 1)
+                                {
+                                    <td>
+                                        <a href="@Url.Action("GetItem", "Item", new { itemId = rowData[0], collectionId = Model.Id })"
+                                           class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">@rowData[j]</a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>@(rowData[j].Length > 50 ? rowData[j].Substring(0, 20) + "..." : rowData[j])</td>
+                                }
                             }
-                            else
-                            {
-                                <td>@(rowData[j].Length > 50 ? rowData[j].Substring(0, 20) + "..." : rowData[j])</td>
-                            }
-                        }
-                    </tr>
+                        </tr>
+                    }
                 }
-            }
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
+}
 
 @section scripts {
     <script>

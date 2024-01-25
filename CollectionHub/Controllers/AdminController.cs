@@ -15,7 +15,7 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Admin()
         {
-            if (await _adminService.IsUserBlockedOrNotAdmin(HttpContext.User.Identity.Name))
+            if (HttpContext.User.Identity == null || await _adminService.IsUserBlockedOrNotAdmin(HttpContext.User.Identity.Name))
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -27,7 +27,7 @@ namespace CollectionHub.Controllers
         [HttpPost]
         public async Task<IActionResult> HandleAdminAction(string action, List<string> selectedUserEmails)
         {
-            if (await _adminService.IsUserBlockedOrNotAdmin(HttpContext.User.Identity.Name))
+            if (HttpContext.User.Identity == null || await _adminService.IsUserBlockedOrNotAdmin(HttpContext.User.Identity.Name))
             {
                 return RedirectToAction("Login", "Account");
             }

@@ -87,7 +87,7 @@ namespace CollectionHub.Domain
             }
         }
 
-        private object ChangeType(object value, Type conversion)
+        private object? ChangeType(object value, Type conversion)
         {
             var t = conversion;
 

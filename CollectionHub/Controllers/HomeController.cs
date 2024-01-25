@@ -7,7 +7,7 @@ namespace CollectionHub.Controllers
     {
         public IActionResult Index()
         {
-            if (HttpContext.User.Identity.IsAuthenticated)
+            if (HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("MyCollections", "Collection");
             }
@@ -37,7 +37,7 @@ namespace CollectionHub.Controllers
             return Redirect(Request.Headers["Referer"].ToString() ?? "/");
         }
 
-        private void SetCookiesForTheme(string? theme)
+        private void SetCookiesForTheme(string theme)
         {
             Response.Cookies.Append(
                 "ThemePreference",
@@ -45,7 +45,7 @@ namespace CollectionHub.Controllers
                 new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
         }
 
-        private void SetCookiesForLanguage(string? culture)
+        private void SetCookiesForLanguage(string culture)
         {
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,

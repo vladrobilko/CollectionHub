@@ -15,7 +15,7 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            if (HttpContext.User.Identity.IsAuthenticated)
+            if (HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("MyCollections", "Collection");
             }
@@ -37,7 +37,7 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            if (HttpContext.User.Identity.IsAuthenticated)
+            if (HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("MyCollections", "Collection");
             }
@@ -68,7 +68,7 @@ namespace CollectionHub.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GoogleSignIn()
         {
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account") ?? throw new NotImplementedException();
 
             var properties = await _accountService.GetGoogleExternalAuthProperties(redirectUrl);
 

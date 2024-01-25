@@ -29,7 +29,7 @@ namespace CollectionHub.Controllers
         [HttpPost]
         public async Task<IActionResult> AddComment(string text, long itemId, long collectionId)
         {
-            if (!HttpContext.User.Identity.IsAuthenticated)
+            if (HttpContext.User.Identity == null || !HttpContext.User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -42,7 +42,7 @@ namespace CollectionHub.Controllers
         [HttpGet]
         public async Task<IActionResult> PressLike(long itemId, long collectionId)
         {
-            if (!HttpContext.User.Identity.IsAuthenticated)
+            if (HttpContext.User.Identity == null || !HttpContext.User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account");
             }

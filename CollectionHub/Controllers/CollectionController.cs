@@ -29,7 +29,7 @@ namespace CollectionHub.Controllers
         {
             var viewModel = await _collectionService.GetEmptyCollectionViewModel();
 
-            if (TempData.TryGetValue("ImageUrl", out var imagePath))
+            if (TempData.TryGetValue("ImageUrl", out var imagePath) && imagePath != null)
             {
                 viewModel.ImageUrl = (string)imagePath;
             }
@@ -107,7 +107,7 @@ namespace CollectionHub.Controllers
         {
             var collection = await _collectionService.GetUserCollection(this.GetUserNameFromContext(), id);
 
-            if (TempData.TryGetValue("ImageUrl", out var imagePath))
+            if (TempData.TryGetValue("ImageUrl", out var imagePath) && imagePath != null)
             {
                 collection.ImageUrl = (string)imagePath;
             }
