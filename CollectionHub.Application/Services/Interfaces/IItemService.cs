@@ -8,7 +8,7 @@ namespace CollectionHub.Services.Interfaces
         Task<long> CreateItem(string userName, IFormCollection formCollection);
 
         Task<List<List<string>>> GetCollectionItems(long collectionId, Dictionary<string, string> fieldNames);
-        
+
         Task<List<ItemViewModel>> GetRecentlyAddedItemsForRead();
 
         Task<ItemViewModel> GetItem(long itemId, long collectionId);

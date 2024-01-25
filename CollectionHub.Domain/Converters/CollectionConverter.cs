@@ -13,23 +13,34 @@ namespace CollectionHub.Domain.Converters
             {
                 var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-                foreach (var header in collection.AllHeaders.Values)
-                {
-                    csv.WriteField(header);
-                }
-                csv.NextRecord();
+                WriteCsvHeader(csv, collection.AllHeaders.Values);
 
-                for (int i = 0; i < collection.Items.Count; i++)
-                {
-                    for (int j = 0; j < collection.AllHeaders.Count; j++)
-                    {
-                        var value = collection.Items[i][j + 1];
-                        csv.WriteField(value);
-                    }
-                    csv.NextRecord();
-                }
+                WriteCsvData(csv, collection.Items);
 
                 return Encoding.UTF8.GetBytes(writer.ToString());
+            }
+        }
+
+        private static void WriteCsvHeader(CsvWriter csv, IEnumerable<string> headers)
+        {
+            foreach (var header in headers)
+            {
+                csv.WriteField(header);
+            }
+
+            csv.NextRecord();
+        }
+
+        private static void WriteCsvData(CsvWriter csv, List<List<string>> items)
+        {
+            foreach (var row in items)
+            {
+                foreach (var value in row.Skip(1))
+                {
+                    csv.WriteField(value);
+                }
+
+                csv.NextRecord();
             }
         }
     }

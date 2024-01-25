@@ -20,20 +20,49 @@ namespace CollectionHub.Services
             _signInManager = signInManager;
         }
 
+        public async Task<bool> Register(RegisterUserViewModel registerModel)
+        {
+            var result = await CreateAndSignInUserAsync(registerModel, CreateUser(registerModel));
+            return result.Succeeded;
+        }
+
+        public async Task<bool> Login(LoginUserViewModel loginModel)
+        {
+            var user = await _userManager.FindByEmailAsync(loginModel.Email);
+
+            if (user == null)
+            {
+                loginModel.SetErrorMessage(null, user);
+                return false;
+            }
+
+            var signInResult = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
+
+            if (!user.IsBlocked && signInResult.Succeeded)
+            {
+                await UpdateUserAsync(user);
+            }
+            else
+            {
+                await Logout();
+                loginModel.SetErrorMessage(signInResult, user);
+            }
+
+            return user?.IsBlocked == false && signInResult.Succeeded;
+        }
+
         public Task<AuthenticationProperties> GetGoogleExternalAuthProperties(string redirectUrl)
         {
-            var properties  = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
 
             return Task.FromResult(properties);
-        } 
+        }
 
         public async Task<bool> ExternalSignIn()
         {
             var info = await _signInManager.GetExternalLoginInfoAsync() ?? throw new NotImplementedException();
 
-            var resultSignIn = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
-
-            if (resultSignIn.Succeeded)
+            if (await TrySignInWithExternalInfoAsync(info))
             {
                 return true;
             }
@@ -54,37 +83,12 @@ namespace CollectionHub.Services
             return true;
         }
 
-        public async Task<bool> Register(RegisterUserViewModel registerModel)
-        {
-            var result = await CreateAndSignInUserAsync(registerModel, CreateUser(registerModel));
-            return result.Succeeded;
-        }
-
-        public async Task<bool> Login(LoginUserViewModel loginModel)
-        {
-            var user = await _userManager.FindByEmailAsync(loginModel.Email);
-            if (user == null)
-            {
-                loginModel.SetErrorMessage(null, user);
-                return false;
-            }
-            var signInResult = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
-            if (!user.IsBlocked && signInResult.Succeeded)
-            {
-                await UpdateUserAsync(user);
-            }
-            else
-            {
-                loginModel.SetErrorMessage(signInResult, user);
-            }
-            return user?.IsBlocked == false && signInResult.Succeeded;
-        }
-
         public async Task Logout() => await _signInManager.SignOutAsync();
 
         private async Task<IdentityResult> CreateAndSignInUserAsync(RegisterUserViewModel registerModel, UserDb user)
         {
             var result = await _userManager.CreateAsync(user, registerModel.Password);
+
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "User");
@@ -94,6 +98,7 @@ namespace CollectionHub.Services
             {
                 registerModel.ErrorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
             }
+
             return result;
         }
 
@@ -113,9 +118,17 @@ namespace CollectionHub.Services
             return createUserResult.Succeeded;
         }
 
+        private async Task<bool> TrySignInWithExternalInfoAsync(ExternalLoginInfo info)
+        {
+            var resultSignIn = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            return resultSignIn.Succeeded;
+        }
+
         private async Task UpdateUserAsync(UserDb user)
         {
             user.LastLoginDate = DateTimeOffset.Now;
+
             await _userManager.UpdateAsync(user);
         }
 

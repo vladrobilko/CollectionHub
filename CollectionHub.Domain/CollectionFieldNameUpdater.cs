@@ -16,6 +16,11 @@ namespace CollectionHub.Domain
                 return false;
             }
 
+            return UpdateFirstNullPropertyWithValue(propertyNames, collection, name);
+        }
+
+        private bool UpdateFirstNullPropertyWithValue(string[] propertyNames, CollectionDb collection, string name)
+        {
             foreach (var propertyName in propertyNames)
             {
                 var property = collection.GetType().GetProperty(propertyName);

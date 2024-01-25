@@ -20,8 +20,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication()
     .AddGoogle(options =>
     {
-        options.ClientId = builder.Configuration["GoogleClientId"];
-        options.ClientSecret = builder.Configuration["GoogleClientSecret"];
+        options.ClientId = builder.Configuration["GoogleClientId"] ?? throw new NullReferenceException();
+        options.ClientSecret = builder.Configuration["GoogleClientSecret"] ?? throw new NullReferenceException();
     });
 
 builder.Services.AddSignalR();

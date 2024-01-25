@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using CollectionHub.Domain.Interfaces;
 using CollectionHub.Domain;
 using Microsoft.AspNetCore.SignalR;
-using CollectionHub.Domain.Models.ViewModels;
 
 namespace CollectionHub.Services
 {
@@ -48,6 +47,7 @@ namespace CollectionHub.Services
 
             await _context.AddAsync(newItem);
             await _context.SaveChangesAsync();
+
             await _algolia.CreateItem(newItem);
 
             return collectionId;
@@ -112,6 +112,7 @@ namespace CollectionHub.Services
             _itemMapper.MapFormFieldsToItem(itemToUpdate, formCollection, isItemNew: false);
 
             await _context.SaveChangesAsync();
+
             await _algolia.UpdateItem(itemToUpdate);
 
             return itemToUpdate.CollectionId;

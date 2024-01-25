@@ -15,6 +15,7 @@ namespace CollectionHub.Services
         public async Task<List<UserDb>> GetSortUsers()
         {
             var users = await _userManager.Users.AsNoTracking().ToListAsync();
+
             return users.OrderByDescending(u => u.IsAdmin).ToList();
         }
 
@@ -35,7 +36,9 @@ namespace CollectionHub.Services
         public async Task<bool> IsUserBlockedOrNotAdmin(string? email)
         {
             var user = await _userManager.FindByEmailAsync(email);
+
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
             return user == null || user.IsBlocked || !isAdmin;
         }
 
@@ -44,20 +47,21 @@ namespace CollectionHub.Services
             foreach (var email in emails)
             {
                 var user = await _userManager.FindByEmailAsync(email);
+
                 if (user != null)
                 {
                     user.IsAdmin = isAdmin;
-                    if (isAdmin) 
+                    if (isAdmin)
                     {
                         await _userManager.RemoveFromRoleAsync(user, "User");
-                        await _userManager.AddToRoleAsync(user, "Admin"); 
+                        await _userManager.AddToRoleAsync(user, "Admin");
                     }
                     else
                     {
                         await _userManager.RemoveFromRoleAsync(user, "Admin");
                         await _userManager.AddToRoleAsync(user, "User");
                     }
-                     await _userManager.UpdateAsync(user);
+                    await _userManager.UpdateAsync(user);
                 }
             }
         }
@@ -67,6 +71,7 @@ namespace CollectionHub.Services
             foreach (var email in emails)
             {
                 var user = await _userManager.FindByEmailAsync(email);
+
                 if (user != null)
                 {
                     user.IsBlocked = isBlocked;
@@ -80,8 +85,11 @@ namespace CollectionHub.Services
             foreach (var email in emails)
             {
                 var user = await _userManager.FindByEmailAsync(email);
+
                 if (user != null)
+                {
                     await _userManager.DeleteAsync(user);
+                }
             }
         }
     }

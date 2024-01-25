@@ -18,7 +18,7 @@ namespace CollectionHub.Services
         private readonly IItemService _itemService;
 
         private readonly ICollectionFieldNameUpdater _fieldNameUpdater;
-        
+
         private readonly IAlgoliaIntegration _algolia;
 
         public CollectionService(ApplicationDbContext context, UserManager<UserDb> userManager, IItemService itemService, ICollectionFieldNameUpdater fieldNameUpdater, IAlgoliaIntegration algolia)
@@ -106,8 +106,9 @@ namespace CollectionHub.Services
         {
             var collection = await _context.Collections
                 .AsNoTracking()
+                .Where(x => x.Id == id)
                 .Include(x => x.Category)
-                .FirstAsync(x => x.Id == id);
+                .FirstAsync();
 
             var categories = await GetAllCategories();
 
@@ -116,7 +117,7 @@ namespace CollectionHub.Services
             return collection.ToCollectionViewModel(items, categories);
         }
 
-        public async Task EditCollection(string userName, CollectionViewModel collectionViewModel)// change it 
+        public async Task EditCollection(string userName, CollectionViewModel collectionViewModel)
         {
             var categoryDb = await _context.Categories.FirstAsync(x => x.Name == collectionViewModel.Category);
 
@@ -145,20 +146,26 @@ namespace CollectionHub.Services
 
             if (collection.Items.Count != 0)
             {
-                foreach (var item in collection.Items)
-                {
-                    _context.Comments.RemoveRange(item.Comments);
-                    _context.Likes.RemoveRange(item.Likes);
-                }
-                _context.Tags.RemoveRange(collection.Items.SelectMany(item => item.Tags));
-                _context.RemoveRange(collection.Items);
-
-                await _algolia.DeleteItems(collection.Items.Select(x => x.Id.ToString()));
+                await DeleteCollectionItemsDb(collection.Items);
             }
 
             _context.Remove(collection);
 
             await _context.SaveChangesAsync();
+        }
+
+        private async Task DeleteCollectionItemsDb(ICollection<ItemDb> items)
+        {
+            foreach (var item in items)
+            {
+                _context.Comments.RemoveRange(item.Comments);
+                _context.Likes.RemoveRange(item.Likes);
+            }
+
+            _context.Tags.RemoveRange(items.SelectMany(item => item.Tags));
+            _context.RemoveRange(items);
+
+            await _algolia.DeleteItems(items.Select(x => x.Id.ToString()));
         }
 
         private CollectionDb CreateCollectionDbInstance(UserDb user, CollectionViewModel collection, CategoryDb category) =>

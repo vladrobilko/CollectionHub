@@ -10,7 +10,8 @@ namespace CollectionHub.Domain.Converters
         {
             itemAlgolia.Name = itemDb.Name;
             itemAlgolia.Tags = string.Join(", ", itemDb.Tags.Select(tag => tag.Name));
-            itemAlgolia.Text = $"{itemDb.String1Value ?? ""} {itemDb.String2Value ?? ""} {itemDb.String3Value ?? ""} {itemDb.Text1Value ?? ""} {itemDb.Text2Value ?? ""} {itemDb.Text3Value ?? ""}";
+            itemAlgolia.Text = $"{itemDb.String1Value ?? ""} {itemDb.String2Value ?? ""} {itemDb.String3Value ?? ""} " +
+                               $"{itemDb.Text1Value ?? ""} {itemDb.Text2Value ?? ""} {itemDb.Text3Value ?? ""}";
 
             return itemAlgolia;
         }

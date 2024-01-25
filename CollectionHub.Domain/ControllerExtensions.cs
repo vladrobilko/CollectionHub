@@ -7,6 +7,7 @@ namespace CollectionHub.Domain
         public static string GetUserNameFromContext(this Controller controller)
         {
             var isAdmin = controller.User.IsInRole("Admin");
+
             var userNameCookies = controller.Request.Cookies["UserName"];
 
             if (isAdmin && userNameCookies != null)

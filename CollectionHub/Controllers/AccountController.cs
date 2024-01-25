@@ -69,6 +69,7 @@ namespace CollectionHub.Controllers
         public async Task<IActionResult> GoogleSignIn()
         {
             var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
+
             var properties = await _accountService.GetGoogleExternalAuthProperties(redirectUrl);
 
             return Challenge(properties, "Google");

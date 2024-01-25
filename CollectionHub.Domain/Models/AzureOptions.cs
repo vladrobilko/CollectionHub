@@ -10,6 +10,6 @@
 
         public string ConnectionString { get; set; }
 
-        public string BlobURL { get; set; }        
+        public string BlobURL { get; set; }
     }
 }
